@@ -1,0 +1,226 @@
+[
+    {
+        "user_id": 1,
+        "module": "backlink",
+        "request_key": "example.com",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 06:39:56"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "example.com",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 06:39:56"
+    },
+    {
+        "user_id": 1,
+        "module": "crawl",
+        "request_key": "https:\/\/example.com",
+        "source": "invalid_url",
+        "status_code": 422,
+        "created_at": "2026-02-21 06:39:56"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 06:40:16"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 06:40:24"
+    },
+    {
+        "user_id": 1,
+        "module": "backlink",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 06:40:24"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:13:09"
+    },
+    {
+        "user_id": 1,
+        "module": "backlink",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:13:09"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:22:58"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "competitor.com",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:22:58"
+    },
+    {
+        "user_id": 1,
+        "module": "backlink",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:22:58"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:32:04"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "semrush.com",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:32:04"
+    },
+    {
+        "user_id": 1,
+        "module": "backlink",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:32:04"
+    },
+    {
+        "user_id": 1,
+        "module": "backlink",
+        "request_key": "semrush.com",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:32:04"
+    },
+    {
+        "user_id": 1,
+        "module": "competitor",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:32:11"
+    },
+    {
+        "user_id": 1,
+        "module": "backlink",
+        "request_key": "example.com",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 07:32:11"
+    },
+    {
+        "user_id": 1,
+        "module": "rank_tracker_add",
+        "request_key": "seo audit software|1",
+        "source": "add",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:23:25"
+    },
+    {
+        "user_id": 1,
+        "module": "rank_tracker_run",
+        "request_key": "1",
+        "source": "daily_check",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:23:31"
+    },
+    {
+        "user_id": 1,
+        "module": "rank_tracker_run",
+        "request_key": "all",
+        "source": "daily_check",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:23:35"
+    },
+    {
+        "user_id": 1,
+        "module": "rank_tracker_run",
+        "request_key": "all",
+        "source": "daily_check",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:10"
+    },
+    {
+        "user_id": 2,
+        "module": "rank_tracker_add",
+        "request_key": "rank test keyword 1|2",
+        "source": "add",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "module": "rank_tracker_add",
+        "request_key": "rank test keyword 2|2",
+        "source": "add",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "module": "rank_tracker_add",
+        "request_key": "rank test keyword 3|2",
+        "source": "add",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "module": "rank_tracker_add",
+        "request_key": "rank test keyword 4|2",
+        "source": "add",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "module": "rank_tracker_add",
+        "request_key": "rank test keyword 5|2",
+        "source": "add",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 1,
+        "module": "rank_tracker_run",
+        "request_key": "all",
+        "source": "daily_check",
+        "status_code": 200,
+        "created_at": "2026-02-21 09:34:37"
+    },
+    {
+        "user_id": 2,
+        "module": "rank_tracker_run",
+        "request_key": "all",
+        "source": "daily_check",
+        "status_code": 200,
+        "created_at": "2026-02-21 09:34:37"
+    }
+]

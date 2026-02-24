@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "name": "Test User",
+        "email": "test.user@serponiq.com",
+        "password": "$2y$12$CFoDf2ZF3Gy265n9CGroWej1UYDI0NJ3S99zuhIhkdMbj\/hEQqbia",
+        "plan_type": "free",
+        "auth_provider": "local",
+        "google_id": null,
+        "google_avatar": null,
+        "role": "user",
+        "status": "active",
+        "suspended_reason": null,
+        "created_at": "2026-02-23 15:54:17",
+        "last_login_at": null
+    },
+    {
+        "id": 2,
+        "name": "Admin User",
+        "email": "admin@serponiq.com",
+        "password": "$2y$12$z4364pIHT3u7srxHqYCzku.3UOs5IsLtmgZU3L4mLsfQKNHy89hd6",
+        "plan_type": "agency",
+        "auth_provider": "local",
+        "google_id": null,
+        "google_avatar": null,
+        "role": "super_admin",
+        "status": "active",
+        "suspended_reason": null,
+        "created_at": "2026-02-23 16:19:29",
+        "last_login_at": null
+    }
+]

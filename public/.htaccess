@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Prevent directory listing
+    Options -Indexes
+
+    # Block access to hidden files
+    <FilesMatch "^\.">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    # Route API requests (if we wanted pretty URLs, but we are using analyze.php directly)
+    # RewriteRule ^api/analyze$ analyze.php [L]
+
+</IfModule>

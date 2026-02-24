@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "project_id": 1,
+        "keyword": "seo audit software",
+        "country": "US",
+        "device_type": "desktop",
+        "status": "active",
+        "created_at": "2026-02-21 08:23:25",
+        "updated_at": "2026-02-21 08:23:25"
+    },
+    {
+        "id": 2,
+        "project_id": 2,
+        "keyword": "rank test keyword 1",
+        "country": "US",
+        "device_type": "desktop",
+        "status": "active",
+        "created_at": "2026-02-21 08:24:59",
+        "updated_at": "2026-02-21 08:24:59"
+    },
+    {
+        "id": 3,
+        "project_id": 2,
+        "keyword": "rank test keyword 2",
+        "country": "US",
+        "device_type": "desktop",
+        "status": "active",
+        "created_at": "2026-02-21 08:24:59",
+        "updated_at": "2026-02-21 08:24:59"
+    },
+    {
+        "id": 4,
+        "project_id": 2,
+        "keyword": "rank test keyword 3",
+        "country": "US",
+        "device_type": "desktop",
+        "status": "active",
+        "created_at": "2026-02-21 08:24:59",
+        "updated_at": "2026-02-21 08:24:59"
+    },
+    {
+        "id": 5,
+        "project_id": 2,
+        "keyword": "rank test keyword 4",
+        "country": "US",
+        "device_type": "desktop",
+        "status": "active",
+        "created_at": "2026-02-21 08:24:59",
+        "updated_at": "2026-02-21 08:24:59"
+    },
+    {
+        "id": 6,
+        "project_id": 2,
+        "keyword": "rank test keyword 5",
+        "country": "US",
+        "device_type": "desktop",
+        "status": "active",
+        "created_at": "2026-02-21 08:24:59",
+        "updated_at": "2026-02-21 08:24:59"
+    }
+]

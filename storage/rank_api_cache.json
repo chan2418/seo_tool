@@ -1,0 +1,50 @@
+{
+    "cba49390ca92551182baf60c848ef653b606734c": {
+        "success": true,
+        "rank_position": 101,
+        "source": "simulated",
+        "checked_results": 100,
+        "found": false,
+        "found_url": ""
+    },
+    "6e77d7dcb3b4e511731d7a23d6b5be00cb25e484": {
+        "success": true,
+        "rank_position": 99,
+        "source": "simulated",
+        "checked_results": 100,
+        "found": true,
+        "found_url": "https:\/\/sample.com\/"
+    },
+    "2fe33ba001e20f5a4b437895f02d524b6a81aa0f": {
+        "success": true,
+        "rank_position": 101,
+        "source": "simulated",
+        "checked_results": 100,
+        "found": false,
+        "found_url": ""
+    },
+    "ae0651667a9d1aa22a620dd002c3c256c1c73454": {
+        "success": true,
+        "rank_position": 40,
+        "source": "simulated",
+        "checked_results": 100,
+        "found": true,
+        "found_url": "https:\/\/sample.com\/"
+    },
+    "59f2b8825646c3bcdb8e2e17d3ecf895ecc4364b": {
+        "success": true,
+        "rank_position": 65,
+        "source": "simulated",
+        "checked_results": 100,
+        "found": true,
+        "found_url": "https:\/\/sample.com\/"
+    },
+    "201c11891600b28828820a064163c0770effff0f": {
+        "success": true,
+        "rank_position": 36,
+        "source": "simulated",
+        "checked_results": 100,
+        "found": true,
+        "found_url": "https:\/\/sample.com\/"
+    }
+}

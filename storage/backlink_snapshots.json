@@ -1,0 +1,308 @@
+{
+    "example.com": {
+        "user_id": 1,
+        "source": "simulated",
+        "created_at": "2026-02-21 06:39:56",
+        "payload": {
+            "summary": {
+                "total_backlinks": 258665,
+                "referring_domains": 16167,
+                "dofollow_pct": 65,
+                "nofollow_pct": 35
+            },
+            "top_anchor_texts": [
+                {
+                    "text": "example.com",
+                    "count": 1585
+                },
+                {
+                    "text": "click here",
+                    "count": 465
+                },
+                {
+                    "text": "learn more",
+                    "count": 225
+                },
+                {
+                    "text": "official website",
+                    "count": 135
+                },
+                {
+                    "text": "read more",
+                    "count": 155
+                }
+            ],
+            "top_linking_domains": [
+                {
+                    "domain": "ref1.example.com",
+                    "backlinks": 18969,
+                    "authority": 56
+                },
+                {
+                    "domain": "ref2.example.com",
+                    "backlinks": 14227,
+                    "authority": 67
+                },
+                {
+                    "domain": "ref3.example.com",
+                    "backlinks": 11381,
+                    "authority": 78
+                },
+                {
+                    "domain": "ref4.example.com",
+                    "backlinks": 9484,
+                    "authority": 89
+                },
+                {
+                    "domain": "ref5.example.com",
+                    "backlinks": 8129,
+                    "authority": 20
+                },
+                {
+                    "domain": "ref6.example.com",
+                    "backlinks": 7113,
+                    "authority": 31
+                },
+                {
+                    "domain": "ref7.example.com",
+                    "backlinks": 6323,
+                    "authority": 42
+                },
+                {
+                    "domain": "ref8.example.com",
+                    "backlinks": 5691,
+                    "authority": 53
+                },
+                {
+                    "domain": "ref9.example.com",
+                    "backlinks": 5173,
+                    "authority": 64
+                },
+                {
+                    "domain": "ref10.example.com",
+                    "backlinks": 4742,
+                    "authority": 75
+                }
+            ],
+            "top_backlinks": [
+                {
+                    "source_url": "https:\/\/source1.example.net\/article-1",
+                    "target_url": "https:\/\/example.com\/features",
+                    "anchor": "click here",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source2.example.net\/article-2",
+                    "target_url": "https:\/\/example.com\/blog\/post-2",
+                    "anchor": "learn more",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source3.example.net\/article-3",
+                    "target_url": "https:\/\/example.com\/features",
+                    "anchor": "official website",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source4.example.net\/article-4",
+                    "target_url": "https:\/\/example.com\/blog\/post-4",
+                    "anchor": "read more",
+                    "link_type": "nofollow"
+                },
+                {
+                    "source_url": "https:\/\/source5.example.net\/article-5",
+                    "target_url": "https:\/\/example.com\/features",
+                    "anchor": "brand page",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source6.example.net\/article-6",
+                    "target_url": "https:\/\/example.com\/blog\/post-6",
+                    "anchor": "example.com",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source7.example.net\/article-7",
+                    "target_url": "https:\/\/example.com\/features",
+                    "anchor": "click here",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source8.example.net\/article-8",
+                    "target_url": "https:\/\/example.com\/blog\/post-8",
+                    "anchor": "learn more",
+                    "link_type": "nofollow"
+                },
+                {
+                    "source_url": "https:\/\/source9.example.net\/article-9",
+                    "target_url": "https:\/\/example.com\/features",
+                    "anchor": "official website",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source10.example.net\/article-10",
+                    "target_url": "https:\/\/example.com\/blog\/post-10",
+                    "anchor": "read more",
+                    "link_type": "dofollow"
+                }
+            ],
+            "link_type_distribution": {
+                "dofollow": 65,
+                "nofollow": 35
+            }
+        }
+    },
+    "semrush.com": {
+        "user_id": 1,
+        "source": "simulated",
+        "created_at": "2026-02-21 07:32:04",
+        "payload": {
+            "summary": {
+                "total_backlinks": 261042,
+                "referring_domains": 18646,
+                "dofollow_pct": 48,
+                "nofollow_pct": 52
+            },
+            "top_anchor_texts": [
+                {
+                    "text": "semrush.com",
+                    "count": 1962
+                },
+                {
+                    "text": "click here",
+                    "count": 542
+                },
+                {
+                    "text": "learn more",
+                    "count": 202
+                },
+                {
+                    "text": "official website",
+                    "count": 62
+                },
+                {
+                    "text": "read more",
+                    "count": 132
+                }
+            ],
+            "top_linking_domains": [
+                {
+                    "domain": "ref1.semrush.com",
+                    "backlinks": 19143,
+                    "authority": 33
+                },
+                {
+                    "domain": "ref2.semrush.com",
+                    "backlinks": 14357,
+                    "authority": 44
+                },
+                {
+                    "domain": "ref3.semrush.com",
+                    "backlinks": 11486,
+                    "authority": 55
+                },
+                {
+                    "domain": "ref4.semrush.com",
+                    "backlinks": 9572,
+                    "authority": 66
+                },
+                {
+                    "domain": "ref5.semrush.com",
+                    "backlinks": 8204,
+                    "authority": 77
+                },
+                {
+                    "domain": "ref6.semrush.com",
+                    "backlinks": 7179,
+                    "authority": 88
+                },
+                {
+                    "domain": "ref7.semrush.com",
+                    "backlinks": 6381,
+                    "authority": 99
+                },
+                {
+                    "domain": "ref8.semrush.com",
+                    "backlinks": 5743,
+                    "authority": 30
+                },
+                {
+                    "domain": "ref9.semrush.com",
+                    "backlinks": 5221,
+                    "authority": 41
+                },
+                {
+                    "domain": "ref10.semrush.com",
+                    "backlinks": 4786,
+                    "authority": 52
+                }
+            ],
+            "top_backlinks": [
+                {
+                    "source_url": "https:\/\/source1.example.net\/article-1",
+                    "target_url": "https:\/\/semrush.com\/features",
+                    "anchor": "click here",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source2.example.net\/article-2",
+                    "target_url": "https:\/\/semrush.com\/blog\/post-2",
+                    "anchor": "learn more",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source3.example.net\/article-3",
+                    "target_url": "https:\/\/semrush.com\/features",
+                    "anchor": "official website",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source4.example.net\/article-4",
+                    "target_url": "https:\/\/semrush.com\/blog\/post-4",
+                    "anchor": "read more",
+                    "link_type": "nofollow"
+                },
+                {
+                    "source_url": "https:\/\/source5.example.net\/article-5",
+                    "target_url": "https:\/\/semrush.com\/features",
+                    "anchor": "brand page",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source6.example.net\/article-6",
+                    "target_url": "https:\/\/semrush.com\/blog\/post-6",
+                    "anchor": "semrush.com",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source7.example.net\/article-7",
+                    "target_url": "https:\/\/semrush.com\/features",
+                    "anchor": "click here",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source8.example.net\/article-8",
+                    "target_url": "https:\/\/semrush.com\/blog\/post-8",
+                    "anchor": "learn more",
+                    "link_type": "nofollow"
+                },
+                {
+                    "source_url": "https:\/\/source9.example.net\/article-9",
+                    "target_url": "https:\/\/semrush.com\/features",
+                    "anchor": "official website",
+                    "link_type": "dofollow"
+                },
+                {
+                    "source_url": "https:\/\/source10.example.net\/article-10",
+                    "target_url": "https:\/\/semrush.com\/blog\/post-10",
+                    "anchor": "read more",
+                    "link_type": "dofollow"
+                }
+            ],
+            "link_type_distribution": {
+                "dofollow": 48,
+                "nofollow": 52
+            }
+        }
+    }
+}

@@ -1,0 +1,51 @@
+[
+    {
+        "user_id": 1,
+        "request_key": "cba49390ca92551182baf60c848ef653b606734c",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:23:25"
+    },
+    {
+        "user_id": 1,
+        "request_key": "cba49390ca92551182baf60c848ef653b606734c",
+        "source": "cache",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:23:31"
+    },
+    {
+        "user_id": 2,
+        "request_key": "6e77d7dcb3b4e511731d7a23d6b5be00cb25e484",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "request_key": "2fe33ba001e20f5a4b437895f02d524b6a81aa0f",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "request_key": "ae0651667a9d1aa22a620dd002c3c256c1c73454",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "request_key": "59f2b8825646c3bcdb8e2e17d3ecf895ecc4364b",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    },
+    {
+        "user_id": 2,
+        "request_key": "201c11891600b28828820a064163c0770effff0f",
+        "source": "simulated",
+        "status_code": 200,
+        "created_at": "2026-02-21 08:24:59"
+    }
+]

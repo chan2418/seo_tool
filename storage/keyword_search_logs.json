@@ -1,0 +1,83 @@
+[
+    {
+        "user_id": 1,
+        "seed_keyword": "best digital marketing course",
+        "plan_type": "free",
+        "result_count": 5,
+        "source": "api",
+        "counted_for_limit": 1,
+        "created_at": "2026-02-21 06:04:36"
+    },
+    {
+        "user_id": 1,
+        "seed_keyword": "best digital marketing course",
+        "plan_type": "free",
+        "result_count": 5,
+        "source": "cache",
+        "counted_for_limit": 0,
+        "created_at": "2026-02-21 06:04:42"
+    },
+    {
+        "user_id": 1,
+        "seed_keyword": "best digital marketing course",
+        "plan_type": "free",
+        "result_count": 5,
+        "source": "cache",
+        "counted_for_limit": 0,
+        "created_at": "2026-02-21 06:04:42"
+    },
+    {
+        "user_id": 2,
+        "seed_keyword": "seo audit tool",
+        "plan_type": "pro",
+        "result_count": 10,
+        "source": "api",
+        "counted_for_limit": 0,
+        "created_at": "2026-02-21 06:05:54"
+    },
+    {
+        "user_id": 2,
+        "seed_keyword": "seo audit tool",
+        "plan_type": "pro",
+        "result_count": 10,
+        "source": "api",
+        "counted_for_limit": 0,
+        "created_at": "2026-02-21 06:06:24"
+    },
+    {
+        "user_id": 3,
+        "seed_keyword": "seo audit tool",
+        "plan_type": "free",
+        "result_count": 5,
+        "source": "cache",
+        "counted_for_limit": 1,
+        "created_at": "2026-02-21 06:06:30"
+    },
+    {
+        "user_id": 77,
+        "seed_keyword": "keyword one",
+        "plan_type": "free",
+        "result_count": 5,
+        "source": "api",
+        "counted_for_limit": 1,
+        "created_at": "2026-02-21 06:06:37"
+    },
+    {
+        "user_id": 77,
+        "seed_keyword": "keyword two",
+        "plan_type": "free",
+        "result_count": 5,
+        "source": "api",
+        "counted_for_limit": 1,
+        "created_at": "2026-02-21 06:06:37"
+    },
+    {
+        "user_id": 77,
+        "seed_keyword": "keyword three",
+        "plan_type": "free",
+        "result_count": 5,
+        "source": "api",
+        "counted_for_limit": 1,
+        "created_at": "2026-02-21 06:06:37"
+    }
+]
