@@ -105,6 +105,50 @@ class UserActivityLogModel
         }
     }
 
+    public function existsUserAction(int $userId, string $actionType): bool
+    {
+        if ($userId <= 0) {
+            return false;
+        }
+
+        $actionType = $this->sanitizeAction($actionType);
+        if ($actionType === '') {
+            return false;
+        }
+
+        if ($this->useFileStorage) {
+            $rows = $this->readRows();
+            for ($idx = count($rows) - 1; $idx >= 0; $idx--) {
+                $row = $rows[$idx];
+                if ((int) ($row['user_id'] ?? 0) !== $userId) {
+                    continue;
+                }
+                if ((string) ($row['action_type'] ?? '') === $actionType) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        try {
+            $stmt = $this->conn->prepare(
+                'SELECT id
+                 FROM user_activity_logs
+                 WHERE user_id = :user_id
+                   AND action_type = :action_type
+                 LIMIT 1'
+            );
+            $stmt->execute([
+                ':user_id' => $userId,
+                ':action_type' => $actionType,
+            ]);
+            return (bool) $stmt->fetchColumn();
+        } catch (Throwable $error) {
+            $this->switchToFileStorage($error, 'existsUserAction');
+            return $this->existsUserAction($userId, $actionType);
+        }
+    }
+
     private function sanitizeAction(string $actionType): string
     {
         $actionType = strtolower(trim($actionType));

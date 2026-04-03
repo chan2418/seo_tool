@@ -1,12 +1,16 @@
 <?php
 /**
  * SEO Audit Tool - Hostinger Setup
- * 
- * This file redirects incoming traffic to the 'public' directory where the application lives.
- * Ideally, you should point your domain's document root to the 'public' folder.
- * If you can't change the document root (common on shared hosting), this file handles the redirection.
+ *
+ * Front controller for hosts where document root points to project root.
+ * Load the real app entrypoint from /public without external redirects.
  */
 
-// Permanent 301 Redirect to the public folder
-header("Location: public/");
-exit;
+$target = __DIR__ . '/public/index.php';
+if (!is_file($target)) {
+    http_response_code(500);
+    echo 'Application entrypoint not found.';
+    exit;
+}
+
+require $target;

@@ -72,6 +72,8 @@ function scoreBadgeClass(int $score): string
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Audit History - SEO Audit SaaS</title>
     <script>
         (function () {
@@ -187,9 +189,7 @@ function scoreBadgeClass(int $score): string
                     </span>
 
                     <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 text-sm font-bold text-white">
-                            <?php echo htmlspecialchars(strtoupper(substr($userName, 0, 1))); ?>
-                        </div>
+                        <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"><img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1"></div>
                         <div class="hidden sm:block">
                             <p class="text-xs text-slate-500 dark:text-slate-400">Analyst</p>
                             <p class="text-sm font-semibold text-slate-900 dark:text-slate-100"><?php echo htmlspecialchars($userName); ?></p>
@@ -205,7 +205,7 @@ function scoreBadgeClass(int $score): string
                     <h2 class="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Audit history is locked on Free plan</h2>
                     <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Upgrade to Pro or Agency to unlock timeline charts and historical report views.</p>
                     <div class="mt-4 flex flex-wrap gap-3">
-                        <a href="subscription.php" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">View Plans</a>
+                        <a href="subscription" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">View Plans</a>
                     </div>
                 </section>
             <?php else: ?>
@@ -233,7 +233,7 @@ function scoreBadgeClass(int $score): string
                         <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Score Trend</h2>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Timeline of your latest 24 audits.</p>
                     </div>
-                    <a href="index.php#run-audit" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Run New Audit</a>
+                    <a href="/#run-audit" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Run New Audit</a>
                 </div>
                 <div class="mt-6 h-72">
                     <canvas id="history-chart"></canvas>
@@ -270,7 +270,7 @@ function scoreBadgeClass(int $score): string
 
                                 <p class="mt-4 truncate text-xs text-slate-500 dark:text-slate-400" title="<?php echo htmlspecialchars($audit['url']); ?>"><?php echo htmlspecialchars($audit['url']); ?></p>
 
-                                <a href="results.php?id=<?php echo (int) $audit['id']; ?>" class="mt-4 inline-flex items-center text-sm font-semibold text-brand-500 transition hover:text-brand-600">
+                                <a href="results?id=<?php echo (int) $audit['id']; ?>" class="mt-4 inline-flex items-center text-sm font-semibold text-brand-500 transition hover:text-brand-600">
                                     View Report ->
                                 </a>
                             </article>

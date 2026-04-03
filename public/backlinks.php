@@ -20,6 +20,8 @@ $isAgency = !empty($featureAccess['allowed']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Backlink Overview - SEO SaaS</title>
     <script>
         (function () {
@@ -83,7 +85,7 @@ $isAgency = !empty($featureAccess['allowed']);
             <section class="surface-card p-6 shadow-soft sm:p-8">
                 <h3 class="text-lg font-bold">Upgrade to Agency</h3>
                 <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Backlink overview, crawler, and white-label reports are available on the Agency plan.</p>
-                <div class="mt-4 flex gap-3"><a href="subscription.php" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white">View Plans</a></div>
+                <div class="mt-4 flex gap-3"><a href="subscription" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white">View Plans</a></div>
             </section>
             <?php endif; ?>
 

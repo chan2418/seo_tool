@@ -56,7 +56,7 @@ try {
     
     echo "</ul>";
     echo "<h3>Setup Complete.</h3>";
-    echo "<p><a href='index.php'>Go to Home</a></p>";
+    echo "<p><a href='/'>Go to Home</a></p>";
     
     // Security Warning
     echo "<div style='background:#fff3cd; padding:10px; border:1px solid #ffeeba; margin-top:20px;'>

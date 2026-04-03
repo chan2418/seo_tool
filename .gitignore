@@ -1,2 +1,38 @@
+# Environment and secrets
 .env
+.env.*
+!.env.example
 
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Dependencies
+vendor/
+node_modules/
+
+# PHP / test caches
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# Runtime files
+logs/
+*.log
+*.pid
+*.cache
+.php-preview-router.php
+
+# Generated storage artifacts
+storage/*.log
+storage/*_cron.log
+storage/search_console_sync.log
+storage/subscription_reconcile.log
+storage/ai_queue_cron.log
+storage/audit_*.json
+storage/history_*.json
+storage/demo_requests.log

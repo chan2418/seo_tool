@@ -28,4 +28,9 @@ class UserActivityService
     {
         return $this->model->getRecentByUser($userId, $limit);
     }
+
+    public function hasAction(int $userId, string $actionType): bool
+    {
+        return $this->model->existsUserAction($userId, $actionType);
+    }
 }

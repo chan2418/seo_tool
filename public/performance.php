@@ -121,6 +121,8 @@ foreach ($trend as $point) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>GSC Performance - SEO Audit SaaS</title>
     <script>
         (function () {
@@ -202,7 +204,7 @@ foreach ($trend as $point) {
                         <?php echo htmlspecialchars($planLabel); ?> Plan
                     </span>
                     <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 text-sm font-bold text-white"><?php echo htmlspecialchars(strtoupper(substr($userName, 0, 1))); ?></div>
+                        <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"><img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1"></div>
                         <p class="hidden text-sm font-semibold sm:block"><?php echo htmlspecialchars($userName); ?></p>
                     </div>
                 </div>
@@ -269,7 +271,7 @@ foreach ($trend as $point) {
 
                 <?php if ($selectedProject && !$isConnected): ?>
                     <div class="mt-5 flex flex-wrap items-center gap-3">
-                        <a href="connect-gsc.php?project_id=<?php echo (int) $selectedProjectId; ?>&return_to=<?php echo urlencode('performance.php?project_id=' . $selectedProjectId . '&days=' . $days); ?>" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-5 py-2 text-sm font-semibold text-white shadow-soft">
+                        <a href="connect-gsc?project_id=<?php echo (int) $selectedProjectId; ?>&return_to=<?php echo urlencode('performance?project_id=' . $selectedProjectId . '&days=' . $days); ?>" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-5 py-2 text-sm font-semibold text-white shadow-soft">
                             Connect Google Search Console
                         </a>
                         <p class="text-xs text-slate-500 dark:text-slate-400">You will be redirected to Google OAuth and then choose the property.</p>
@@ -287,10 +289,10 @@ foreach ($trend as $point) {
                             <span class="rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">Manual refresh available on Pro and Agency</span>
                         <?php endif; ?>
 
-                        <form method="post" action="connect-gsc.php" onsubmit="return confirm('Disconnect Search Console from this project?');">
+                        <form method="post" action="connect-gsc" onsubmit="return confirm('Disconnect Search Console from this project?');">
                             <input type="hidden" name="action" value="disconnect">
                             <input type="hidden" name="project_id" value="<?php echo (int) $selectedProjectId; ?>">
-                            <input type="hidden" name="return_to" value="<?php echo htmlspecialchars('performance.php?project_id=' . $selectedProjectId . '&days=' . $days); ?>">
+                            <input type="hidden" name="return_to" value="<?php echo htmlspecialchars('performance?project_id=' . $selectedProjectId . '&days=' . $days); ?>">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($disconnectCsrf); ?>">
                             <button type="submit" class="rounded-xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">Disconnect</button>
                         </form>

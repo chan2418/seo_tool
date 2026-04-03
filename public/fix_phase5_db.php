@@ -181,7 +181,7 @@ try {
     echo '<p style="color:green">Seeded ai_monthly_limit values for plans.</p>';
 
     echo '<p><strong>Phase 5 database patch complete.</strong></p>';
-    echo '<p><a href="ai.php">Open AI Intelligence</a></p>';
+    echo '<p><a href="ai">Open AI Intelligence</a></p>';
 } catch (Throwable $error) {
     echo '<p style="color:red">Error: ' . htmlspecialchars($error->getMessage()) . '</p>';
 }

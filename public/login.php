@@ -3,9 +3,12 @@ require_once __DIR__ . '/../auth/AuthController.php';
 require_once __DIR__ . '/../services/GoogleSignInService.php';
 require_once __DIR__ . '/../middleware/SecuritySettingsMiddleware.php';
 require_once __DIR__ . '/../middleware/RateLimitMiddleware.php';
+require_once __DIR__ . '/../utils/Env.php';
 
 SecuritySettingsMiddleware::enforceIpNotBlocked(false);
 SecuritySettingsMiddleware::enforceMaintenanceMode(false);
+
+Env::load(__DIR__ . '/../.env');
 
 if (!function_exists('auth_sanitize_next_path')) {
     function auth_sanitize_next_path(string $next): string
@@ -29,7 +32,7 @@ $nextRedirect = auth_sanitize_next_path((string) ($_POST['next'] ?? $_GET['next'
 $nextQuery = $nextRedirect !== '' ? '&next=' . urlencode($nextRedirect) : '';
 
 if (isset($_SESSION['user_id'])) {
-    header("Location: " . ($nextRedirect !== '' ? $nextRedirect : 'dashboard.php'));
+    header("Location: " . ($nextRedirect !== '' ? $nextRedirect : 'dashboard'));
     exit;
 }
 
@@ -58,22 +61,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($nextRedirect !== '') {
                 $_SESSION['post_auth_next'] = $nextRedirect;
             }
-            header("Location: admin-2fa.php");
+            header("Location: admin-2fa");
         } else {
-            header("Location: " . ($nextRedirect !== '' ? $nextRedirect : 'dashboard.php'));
+            header("Location: " . ($nextRedirect !== '' ? $nextRedirect : 'dashboard'));
         }
         exit;
     } else {
         $error = $result['error'];
     }
 }
+
+$seoScheme = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ? 'https' : 'http';
+$seoHost = trim((string) ($_SERVER['HTTP_HOST'] ?? ''));
+$seoBaseUrl = trim((string) Env::get('APP_URL', ''));
+if ($seoBaseUrl === '' && $seoHost !== '') {
+    $seoBaseUrl = $seoScheme . '://' . $seoHost;
+}
+$seoBaseUrl = rtrim($seoBaseUrl, '/');
+$seoCanonical = $seoBaseUrl !== '' ? $seoBaseUrl . '/login' : '/login';
+$seoTitle = 'Secure Login | Serponiq';
+$seoDescription = 'Sign in to Serponiq to access SEO audits, keyword tracking, AI insights, and technical SEO workflows.';
+$seoImage = $seoBaseUrl !== '' ? $seoBaseUrl . '/assets/images/logo-256.png' : 'assets/images/logo-256.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SEO Audit SaaS</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+    <title><?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="robots" content="noindex,follow">
+    <link rel="canonical" href="<?php echo htmlspecialchars($seoCanonical, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Serponiq">
+    <meta property="og:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:url" content="<?php echo htmlspecialchars($seoCanonical, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:image" content="<?php echo htmlspecialchars($seoImage, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:image" content="<?php echo htmlspecialchars($seoImage, ENT_QUOTES, 'UTF-8'); ?>">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -116,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <?php if ($googleSignInEnabled): ?>
-            <a href="google-auth.php?mode=login<?php echo htmlspecialchars($nextQuery, ENT_QUOTES, 'UTF-8'); ?>" class="w-full inline-flex items-center justify-center gap-3 border border-gray-300 py-2 rounded hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
+            <a href="/google-auth?mode=login<?php echo htmlspecialchars($nextQuery, ENT_QUOTES, 'UTF-8'); ?>" class="w-full inline-flex items-center justify-center gap-3 border border-gray-300 py-2 rounded hover:bg-gray-50 transition text-sm font-semibold text-gray-700">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3 14.6 2 12 2 6.9 2 2.8 6.1 2.8 11.2S6.9 20.4 12 20.4c6.9 0 9.2-4.8 9.2-7.3 0-.5-.1-.9-.1-1.3H12z"></path>
                 </svg>
@@ -128,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
         <p class="text-center mt-4 text-sm">
-            Don't have an account? <a href="register.php<?php echo $nextRedirect !== '' ? '?next=' . urlencode($nextRedirect) : ''; ?>" class="text-blue-600 hover:underline">Register</a>
+            Don't have an account? <a href="/register<?php echo $nextRedirect !== '' ? '?next=' . urlencode($nextRedirect) : ''; ?>" class="text-blue-600 hover:underline">Register</a>
         </p>
     </div>
 </body>

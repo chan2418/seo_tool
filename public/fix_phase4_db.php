@@ -612,8 +612,8 @@ try {
     echo '<p style="color:green">Seeded security settings defaults.</p>';
 
     echo '<p><strong>Phase 4 database patch complete.</strong></p>';
-    echo '<p><a href="admin/dashboard.php">Open Admin Dashboard</a></p>';
-    echo '<p><a href="fix_phase5_db.php">Run Phase 5 AI Patch</a></p>';
+    echo '<p><a href="admin/dashboard">Open Admin Dashboard</a></p>';
+    echo '<p><a href="fix_phase5_db">Run Phase 5 AI Patch</a></p>';
 } catch (Throwable $error) {
     echo '<p style="color:red">Error: ' . htmlspecialchars($error->getMessage()) . '</p>';
 }

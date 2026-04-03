@@ -34,7 +34,7 @@ unset($_SESSION['oauth_next_redirect']);
 $nextQuery = $nextRedirect !== '' ? '?next=' . urlencode($nextRedirect) : '';
 
 if (!empty($_SESSION['user_id'])) {
-    header('Location: ' . ($nextRedirect !== '' ? $nextRedirect : 'dashboard.php'));
+    header('Location: ' . ($nextRedirect !== '' ? $nextRedirect : 'dashboard'));
     exit;
 }
 
@@ -45,7 +45,7 @@ if (!in_array($defaultMode, ['login', 'register'], true)) {
     $defaultMode = 'login';
 }
 
-$redirectTarget = $defaultMode === 'register' ? 'register.php' : 'login.php';
+$redirectTarget = $defaultMode === 'register' ? 'register' : 'login';
 
 if (!$service->isConfigured()) {
     $_SESSION['auth_flash_error'] = 'Google Sign-In is not configured. Set GOOGLE_AUTH_CLIENT_ID, GOOGLE_AUTH_CLIENT_SECRET, and GOOGLE_AUTH_REDIRECT_URI in .env.';
@@ -69,7 +69,7 @@ if (empty($stateValidation['success'])) {
 }
 
 $mode = strtolower(trim((string) ($stateValidation['mode'] ?? 'login')));
-$redirectTarget = $mode === 'register' ? 'register.php' : 'login.php';
+$redirectTarget = $mode === 'register' ? 'register' : 'login';
 
 if ($mode === 'register') {
     SecuritySettingsMiddleware::enforceRegistrationEnabled();
@@ -114,9 +114,9 @@ if (!empty($loginResult['requires_2fa'])) {
     if ($nextRedirect !== '') {
         $_SESSION['post_auth_next'] = $nextRedirect;
     }
-    header('Location: admin-2fa.php');
+    header('Location: admin-2fa');
     exit;
 }
 
-header('Location: ' . ($nextRedirect !== '' ? $nextRedirect : 'dashboard.php'));
+header('Location: ' . ($nextRedirect !== '' ? $nextRedirect : 'dashboard'));
 exit;

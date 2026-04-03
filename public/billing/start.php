@@ -31,14 +31,14 @@ $cycle = billing_normalize_cycle((string) ($_GET['cycle'] ?? 'monthly'));
 $token = trim((string) ($_GET['token'] ?? ''));
 
 if ($plan === '') {
-    $_SESSION['billing_flash_error'] = 'Invalid plan selected for checkout.';
-    header('Location: ../subscription.php');
+    $_SESSION['billing_flash_error'] = 'Invalid plan selected.';
+    header('Location: ../subscription');
     exit;
 }
 
 if (empty($_SESSION['user_id'])) {
-    $next = 'billing/start.php?plan=' . rawurlencode($plan) . '&cycle=' . rawurlencode($cycle) . '&token=' . rawurlencode($token);
-    header('Location: ../login.php?next=' . urlencode($next));
+    $next = 'billing/start?plan=' . rawurlencode($plan) . '&cycle=' . rawurlencode($cycle) . '&token=' . rawurlencode($token);
+    header('Location: ../login?next=' . urlencode($next));
     exit;
 }
 
@@ -48,30 +48,36 @@ $userId = (int) ($auth['user_id'] ?? ($_SESSION['user_id'] ?? 0));
 
 $csrfKey = 'billing_start_' . $plan . '_' . $cycle;
 if (!CsrfMiddleware::validateToken($token, $csrfKey)) {
-    $_SESSION['billing_flash_error'] = 'Checkout session expired. Please select your plan again.';
-    header('Location: ../subscription.php');
+    $_SESSION['billing_flash_error'] = 'Request session expired. Please select your plan again.';
+    header('Location: ../subscription');
     exit;
 }
 
 RateLimitMiddleware::enforce('billing_start_checkout', 12, 180, $userId, false);
 
 $billingService = new BillingService();
-$result = $billingService->createSubscriptionForPlan($userId, $plan, $cycle);
+$result = $billingService->requestManualContactForPlan($userId, $plan, $cycle);
 if (empty($result['success'])) {
-    $_SESSION['billing_flash_error'] = (string) ($result['error'] ?? 'Unable to start checkout right now.');
-    header('Location: ../subscription.php');
+    $_SESSION['billing_flash_error'] = (string) ($result['error'] ?? 'Unable to submit your plan request right now.');
+    header('Location: ../subscription');
     exit;
 }
 
-$shortUrl = trim((string) ($result['gateway']['short_url'] ?? ''));
-if ($shortUrl === '' || !filter_var($shortUrl, FILTER_VALIDATE_URL) || !preg_match('#^https?://#i', $shortUrl)) {
-    $_SESSION['billing_flash_error'] = 'Checkout URL was not returned by billing provider.';
-    header('Location: ../subscription.php');
-    exit;
+if (!empty($result['email_sent'])) {
+    $_SESSION['billing_flash_success'] = 'For security purposes, online payment is not available for your account right now. Our security system will verify your account once, then we will proceed. A confirmation email has been sent to your registered email.';
+} else {
+    $_SESSION['billing_flash_success'] = 'For security purposes, online payment is not available for your account right now. Our security system will verify your account once, then we will proceed. We could not send the confirmation email right now.';
+}
+$_SESSION['billing_contact_message'] = (string) ($result['message'] ?? 'For security purposes, online payment is not available for your account right now. Our security system will verify your account once, then we will proceed. Our team will contact you soon.');
+$_SESSION['billing_contact_plan'] = (string) ($result['plan_type'] ?? $plan);
+$_SESSION['billing_contact_cycle'] = (string) ($result['billing_cycle'] ?? $cycle);
+$_SESSION['billing_contact_email_sent'] = !empty($result['email_sent']) ? 1 : 0;
+if (!empty($result['effective_plan'])) {
+    $_SESSION['plan_type'] = strtolower((string) $result['effective_plan']);
 }
 
 $usageService = new UsageMonitoringService();
-$usageService->logApiCall($userId, 'billing.start_redirect');
+$usageService->logApiCall($userId, 'billing.manual_contact_request');
 
-header('Location: ' . $shortUrl);
+header('Location: contact-soon');
 exit;

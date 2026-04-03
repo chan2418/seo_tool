@@ -4,14 +4,14 @@ $pageTitle = $pageTitle ?? 'Admin';
 $navRole = strtolower((string) ($adminRole ?? 'admin'));
 
 $menu = [
-    ['key' => 'dashboard', 'label' => 'Dashboard', 'href' => 'dashboard.php', 'permission' => 'admin.dashboard.view'],
-    ['key' => 'users', 'label' => 'Users', 'href' => 'users.php', 'permission' => 'admin.users.view'],
-    ['key' => 'subscriptions', 'label' => 'Subscriptions', 'href' => 'subscriptions.php', 'permission' => 'admin.subscriptions.view'],
-    ['key' => 'revenue', 'label' => 'Revenue', 'href' => 'revenue.php', 'permission' => 'admin.revenue.view'],
-    ['key' => 'system', 'label' => 'System Logs', 'href' => 'system.php', 'permission' => 'admin.system.view'],
-    ['key' => 'security', 'label' => 'Security', 'href' => 'security.php', 'permission' => 'admin.security.view'],
-    ['key' => 'plans', 'label' => 'Plans', 'href' => 'plans.php', 'permission' => 'admin.plans.manage'],
-    ['key' => 'feature_flags', 'label' => 'Feature Flags', 'href' => 'feature-flags.php', 'permission' => 'admin.feature_flags.manage'],
+    ['key' => 'dashboard', 'label' => 'Dashboard', 'href' => 'dashboard', 'permission' => 'admin.dashboard.view'],
+    ['key' => 'users', 'label' => 'Users', 'href' => 'users', 'permission' => 'admin.users.view'],
+    ['key' => 'subscriptions', 'label' => 'Subscriptions', 'href' => 'subscriptions', 'permission' => 'admin.subscriptions.view'],
+    ['key' => 'revenue', 'label' => 'Revenue', 'href' => 'revenue', 'permission' => 'admin.revenue.view'],
+    ['key' => 'system', 'label' => 'System Logs', 'href' => 'system', 'permission' => 'admin.system.view'],
+    ['key' => 'security', 'label' => 'Security', 'href' => 'security', 'permission' => 'admin.security.view'],
+    ['key' => 'plans', 'label' => 'Plans', 'href' => 'plans', 'permission' => 'admin.plans.manage'],
+    ['key' => 'feature_flags', 'label' => 'Feature Flags', 'href' => 'feature-flags', 'permission' => 'admin.feature_flags.manage'],
 ];
 ?>
 <!DOCTYPE html>
@@ -19,6 +19,8 @@ $menu = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="../assets/images/favicon-180.png">
     <title><?php echo htmlspecialchars($pageTitle); ?> - Admin Control Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -39,8 +41,15 @@ $menu = [
     <div class="mx-auto flex w-full max-w-[1600px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <aside class="sticky top-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-2xl lg:block">
             <div class="mb-6 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-500 p-4">
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-100">SEO Suite</p>
-                <p class="mt-1 text-xl font-bold text-white">Admin Core</p>
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/20 bg-white/10">
+                        <img src="../assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1">
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-100">SEO Suite</p>
+                        <p class="mt-1 text-xl font-bold text-white">Admin Core</p>
+                    </div>
+                </div>
             </div>
             <nav class="space-y-1 text-sm">
                 <?php foreach ($menu as $item): ?>
@@ -58,10 +67,10 @@ $menu = [
                 <p>Signed in as <span class="font-semibold text-slate-200"><?php echo htmlspecialchars((string) ($adminUserName ?? 'Admin')); ?></span></p>
                 <p>Role: <span class="font-semibold text-indigo-300"><?php echo htmlspecialchars(admin_role_label((string) ($adminRole ?? 'admin'))); ?></span></p>
                 <div class="pt-2">
-                    <a href="../dashboard.php" class="inline-flex w-full items-center justify-center rounded-lg border border-slate-700 px-3 py-2 font-semibold text-slate-200 hover:bg-slate-800">Switch to User App</a>
+                    <a href="../dashboard" class="inline-flex w-full items-center justify-center rounded-lg border border-slate-700 px-3 py-2 font-semibold text-slate-200 hover:bg-slate-800">Switch to User App</a>
                 </div>
                 <div class="pt-1">
-                    <a href="../logout.php" class="inline-flex w-full items-center justify-center rounded-lg border border-red-500/40 px-3 py-2 font-semibold text-red-300 hover:bg-red-500/10">Logout</a>
+                    <a href="../logout" class="inline-flex w-full items-center justify-center rounded-lg border border-red-500/40 px-3 py-2 font-semibold text-red-300 hover:bg-red-500/10">Logout</a>
                 </div>
             </div>
         </aside>

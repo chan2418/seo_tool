@@ -169,7 +169,7 @@ include __DIR__ . '/includes/nav.php';
                             </td>
                             <td class="px-3 py-3 align-top">
                                 <div class="grid min-w-[360px] gap-2 xl:grid-cols-2">
-                                    <a href="user-activity.php?user_id=<?php echo $uid; ?>" class="inline-flex items-center justify-center rounded-lg border border-slate-700 px-2 py-1 text-xs font-semibold text-slate-200 hover:bg-slate-800 lg:col-span-2">
+                                    <a href="user-activity?user_id=<?php echo $uid; ?>" class="inline-flex items-center justify-center rounded-lg border border-slate-700 px-2 py-1 text-xs font-semibold text-slate-200 hover:bg-slate-800 lg:col-span-2">
                                         View Activity
                                     </a>
                                     <?php if (RoleMiddleware::hasPermission($adminRole, 'admin.users.manage')): ?>

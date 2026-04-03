@@ -5,6 +5,7 @@ require_once __DIR__ . '/../services/UserActivityService.php';
 require_once __DIR__ . '/../services/AuditLogService.php';
 require_once __DIR__ . '/../services/AdminControlService.php';
 require_once __DIR__ . '/../services/AdminTwoFactorService.php';
+require_once __DIR__ . '/../services/EmailNotificationService.php';
 session_start();
 
 class AuthController
@@ -14,6 +15,7 @@ class AuthController
     private AuditLogService $auditLogService;
     private AdminControlService $adminControlService;
     private AdminTwoFactorService $adminTwoFactorService;
+    private EmailNotificationService $emailNotificationService;
 
     public function __construct()
     {
@@ -22,6 +24,7 @@ class AuthController
         $this->auditLogService = new AuditLogService();
         $this->adminControlService = new AdminControlService();
         $this->adminTwoFactorService = new AdminTwoFactorService();
+        $this->emailNotificationService = new EmailNotificationService();
     }
 
     public function register($name, $email, $password)
@@ -91,13 +94,20 @@ class AuthController
                 return ['error' => (string) ($sessionResult['error'] ?? 'Unable to complete login session.')];
             }
 
-            $this->userActivityService->log((int) ($user['id'] ?? 0), 'auth.login_success', [
+            $userId = (int) ($user['id'] ?? 0);
+            $shouldSendLoginEmail = $this->shouldSendFirstLoginEmail($userId);
+
+            $this->userActivityService->log($userId, 'auth.login_success', [
                 'email' => $email,
                 'role' => strtolower((string) ($user['role'] ?? 'user')),
             ]);
-            $this->auditLogService->log((int) ($user['id'] ?? 0), 'auth.login_success', [
+            $this->auditLogService->log($userId, 'auth.login_success', [
                 'email' => $email,
-            ], (int) ($user['id'] ?? 0));
+            ], $userId);
+
+            if ($shouldSendLoginEmail) {
+                $this->sendLoginSuccessEmail($userId, (array) $user, 'password');
+            }
 
             return [
                 'success' => true,
@@ -173,6 +183,8 @@ class AuthController
 
         $created = !empty($upsert['created']);
         $event = $created ? 'auth.register_google' : 'auth.login_google';
+        $shouldSendLoginEmail = $this->shouldSendFirstLoginEmail($userId);
+
         $this->userActivityService->log($userId, $event, [
             'email' => $email,
             'mode' => $mode,
@@ -181,6 +193,9 @@ class AuthController
             'email' => $email,
             'mode' => $mode,
         ], $userId);
+        if ($shouldSendLoginEmail) {
+            $this->sendLoginSuccessEmail($userId, (array) $user, 'google');
+        }
 
         return [
             'success' => true,
@@ -197,7 +212,7 @@ class AuthController
             $this->auditLogService->log($userId, 'auth.logout', [], $userId);
         }
         session_destroy();
-        header('Location: login.php');
+        header('Location: login');
         exit;
     }
 
@@ -234,5 +249,71 @@ class AuthController
             'success' => true,
             'requires_2fa' => !empty($_SESSION['admin_2fa_pending']),
         ];
+    }
+
+    private function sendLoginSuccessEmail(int $userId, array $user, string $provider = 'password'): void
+    {
+        $email = strtolower(trim((string) ($user['email'] ?? '')));
+        if ($userId <= 0 || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+
+        $name = trim((string) ($user['name'] ?? 'User'));
+        if ($name === '') {
+            $name = 'User';
+        }
+
+        $provider = strtolower(trim($provider));
+        if (!in_array($provider, ['password', 'google'], true)) {
+            $provider = 'password';
+        }
+        $providerLabel = $provider === 'google' ? 'Google' : 'Password';
+
+        $requestIp = trim((string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'Unknown'));
+        if ($requestIp === '') {
+            $requestIp = 'Unknown';
+        }
+        $userAgent = trim((string) ($_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'));
+        if ($userAgent === '') {
+            $userAgent = 'Unknown';
+        }
+
+        $subject = 'Successful login to your Serponiq account';
+        $bodyLines = [
+            'Hi ' . $name . ',',
+            '',
+            'Your account was logged in successfully.',
+            'Provider: ' . $providerLabel,
+            'Time: ' . date('Y-m-d H:i:s'),
+            'IP: ' . $requestIp,
+            'Browser: ' . $userAgent,
+            '',
+            'If this was not you, please reset your password immediately.',
+            '',
+            'Serponiq Security',
+        ];
+
+        $sent = $this->emailNotificationService->sendPlainEmail($email, $subject, implode("\n", $bodyLines));
+        if ($sent) {
+            $this->userActivityService->log($userId, 'auth.login_email_sent', [
+                'email' => $email,
+                'provider' => $provider,
+            ]);
+            return;
+        }
+
+        $this->userActivityService->log($userId, 'auth.login_email_failed', [
+            'email' => $email,
+            'provider' => $provider,
+        ]);
+    }
+
+    private function shouldSendFirstLoginEmail(int $userId): bool
+    {
+        if ($userId <= 0) {
+            return false;
+        }
+
+        return !$this->userActivityService->hasAction($userId, 'auth.login_email_sent');
     }
 }

@@ -16,9 +16,9 @@ $planType = $planService->getEffectivePlan($userId, (string) ($_SESSION['plan_ty
 $authService = new GoogleAuthService();
 $searchConsoleService = new SearchConsoleService();
 
-$returnTo = trim((string) ($_REQUEST['return_to'] ?? 'settings.php'));
+$returnTo = trim((string) ($_REQUEST['return_to'] ?? 'settings'));
 if ($returnTo === '' || preg_match('/^https?:\/\//i', $returnTo)) {
-    $returnTo = 'settings.php';
+    $returnTo = 'settings';
 }
 
 $setFlash = static function (string $type, string $message): void {
@@ -28,9 +28,10 @@ $setFlash = static function (string $type, string $message): void {
     ];
 };
 
-$redirectBack = static function (string $target) use ($setFlash): void {
-    if (strpos($target, '.php') !== 0 && strpos($target, '/') !== 0) {
-        $target = $target;
+$redirectBack = static function (string $target): void {
+    $target = trim($target);
+    if ($target === '' || preg_match('#^(?:[a-z][a-z0-9+.-]*:)?//#i', $target)) {
+        $target = 'settings';
     }
     header('Location: ' . $target);
     exit;

@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Block access to hidden files.
+    RewriteRule "(^|/)\." - [F]
+
+    # Avoid rewrite loops for direct /public requests.
+    RewriteRule ^public/ - [L]
+
+    # Support Google auth URLs reached from trailing-slash auth pages
+    # (e.g., /login/google-auth and /register/google-auth).
+    RewriteRule ^(?:login|register)/google-auth/?$ public/google-auth.php [L,QSA,NC]
+    RewriteRule ^(?:login|register)/google-auth-callback/?$ public/google-auth-callback.php [L,QSA,NC]
+
+    # Serve real files from project root as-is.
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Route extensionless app paths to matching /public/*.php files.
+    # This avoids /dashboard -> /dashboard/ -> /public/dashboard.php redirect loops
+    # when wrapper directories exist in project root.
+    RewriteCond %{REQUEST_URI} ^/(.+?)/?$ [NC]
+    RewriteCond %{DOCUMENT_ROOT}/public/%1.php -f
+    RewriteRule ^(.+?)/?$ public/$1.php [L,QSA,NC]
+
+    # Serve real directories from project root as-is.
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Forward all app routes to /public where the app lives.
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+</IfModule>

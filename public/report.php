@@ -63,6 +63,8 @@ if (is_dir($logosDir)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>White-label Reports - SEO SaaS</title>
     <script>
         (function () {

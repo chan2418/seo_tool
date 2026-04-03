@@ -1,10 +1,13 @@
 <?php
 session_start();
 require_once __DIR__ . '/../models/AuditModel.php';
+require_once __DIR__ . '/../utils/Env.php';
+
+Env::load(__DIR__ . '/../.env');
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
-    header('Location: index.php');
+    header('Location: /');
     exit;
 }
 
@@ -19,7 +22,7 @@ $isAuthenticated = isset($_SESSION['user_id']);
 $userName = $_SESSION['user_name'] ?? 'Guest';
 $planType = strtolower($_SESSION['plan_type'] ?? 'free');
 $planLabel = ucfirst($planType);
-$dashboardLink = $isAuthenticated ? 'dashboard.php' : 'index.php';
+$dashboardLink = $isAuthenticated ? 'dashboard' : '/';
 
 function decodeJsonField($value): array
 {
@@ -192,13 +195,58 @@ $scoreMessage = $seoScore >= 80
     : ($seoScore >= 50
         ? 'Good momentum. Fix warnings to push this into the strong zone.'
         : 'Priority fixes required. Address critical issues first for fast gains.');
+
+$seoScheme = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ? 'https' : 'http';
+$seoHost = trim((string) ($_SERVER['HTTP_HOST'] ?? ''));
+$seoBaseUrl = trim((string) Env::get('APP_URL', ''));
+if ($seoBaseUrl === '' && $seoHost !== '') {
+    $seoBaseUrl = $seoScheme . '://' . $seoHost;
+}
+$seoBaseUrl = rtrim($seoBaseUrl, '/');
+$seoCanonicalPath = 'results?id=' . rawurlencode((string) ($report['id'] ?? $id));
+$seoCanonical = $seoBaseUrl !== '' ? $seoBaseUrl . '/' . $seoCanonicalPath : '/' . $seoCanonicalPath;
+$seoTitle = 'SEO Report for ' . $domain . ' | Serponiq';
+$seoDescription = 'Technical SEO report for ' . $domain . ' with score ' . $seoScore . '/100, issue breakdown, and prioritized recommendations.';
+$seoImage = $seoBaseUrl !== '' ? $seoBaseUrl . '/assets/images/logo-256.png' : 'assets/images/logo-256.png';
+$seoSchema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Report',
+    'name' => $seoTitle,
+    'datePublished' => !empty($report['created_at']) ? date('c', strtotime((string) $report['created_at'])) : date('c'),
+    'about' => [
+        '@type' => 'WebSite',
+        'url' => $url,
+        'name' => $domain,
+    ],
+    'description' => $seoDescription,
+    'author' => [
+        '@type' => 'Organization',
+        'name' => 'Serponiq',
+    ],
+];
 ?>
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO Report - <?php echo htmlspecialchars($domain); ?></title>
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+    <title><?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <link rel="canonical" href="<?php echo htmlspecialchars($seoCanonical, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Serponiq">
+    <meta property="og:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:url" content="<?php echo htmlspecialchars($seoCanonical, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:image" content="<?php echo htmlspecialchars($seoImage, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:image" content="<?php echo htmlspecialchars($seoImage, ENT_QUOTES, 'UTF-8'); ?>">
+    <script type="application/ld+json"><?php echo json_encode($seoSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
     <script>
         (function () {
             var storedTheme = localStorage.getItem('seo-theme');
@@ -301,9 +349,9 @@ $scoreMessage = $seoScore >= 80
                 </span>
 
                 <?php if ($isAuthenticated): ?>
-                    <a href="dashboard.php" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Dashboard</a>
+                    <a href="dashboard" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Dashboard</a>
                 <?php else: ?>
-                    <a href="login.php" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Sign In</a>
+                    <a href="login" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Sign In</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -328,7 +376,7 @@ $scoreMessage = $seoScore >= 80
                         </a>
                     </div>
                     <div class="flex flex-wrap gap-3">
-                        <a href="index.php" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Re-run Audit</a>
+                        <a href="/" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">Re-run Audit</a>
                         <a href="<?php echo htmlspecialchars($dashboardLink); ?>" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">Back to Workspace</a>
                     </div>
                 </div>

@@ -40,6 +40,19 @@ if (!is_array($input)) {
 }
 
 $action = strtolower(trim((string) ($input['action'] ?? 'load')));
+$normalizedPlan = strtolower(trim($planType));
+
+if ($action === 'submit' && $normalizedPlan === 'free') {
+    http_response_code(403);
+    echo json_encode([
+        'success' => false,
+        'error_code' => 'AI_UPGRADE_REQUIRED',
+        'error' => 'AI requests are available on Pro or Agency plans. Free plan can view examples only.',
+        'upgrade_required' => true,
+    ]);
+    exit;
+}
+
 $service = new AIIntelligenceService();
 
 try {

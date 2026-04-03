@@ -309,8 +309,8 @@ try {
     }
 
     echo '<p><strong>Phase 3 database patch complete.</strong></p>';
-    echo '<p><a href="fix_phase4_db.php">Run Phase 4 Database Patch</a></p>';
-    echo '<p><a href="dashboard.php">Go to Dashboard</a></p>';
+    echo '<p><a href="fix_phase4_db">Run Phase 4 Database Patch</a></p>';
+    echo '<p><a href="dashboard">Go to Dashboard</a></p>';
 } catch (Throwable $error) {
     echo '<p style="color:red">Error: ' . htmlspecialchars($error->getMessage()) . '</p>';
 }

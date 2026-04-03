@@ -23,6 +23,8 @@ $userName = (string) ($_SESSION['user_name'] ?? 'User');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Onboarding - SEO Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -49,7 +51,7 @@ $userName = (string) ($_SESSION['user_name'] ?? 'User');
                         <?php if (!empty($step['is_completed'])): ?>
                             <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Completed</span>
                         <?php else: ?>
-                            <a href="<?php echo htmlspecialchars((string) ($step['url'] ?? 'dashboard.php')); ?>" class="rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700">Complete</a>
+                            <a href="<?php echo htmlspecialchars((string) ($step['url'] ?? 'dashboard')); ?>" class="rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700">Complete</a>
                         <?php endif; ?>
                     </div>
                 </article>
@@ -58,7 +60,7 @@ $userName = (string) ($_SESSION['user_name'] ?? 'User');
 
         <footer class="mt-6 flex items-center justify-between rounded-2xl bg-white p-5 shadow-sm">
             <p class="text-sm text-slate-600"><?php echo $isFinished ? 'Setup complete. You are ready to scale SEO operations.' : 'You can continue later. Progress saves automatically.'; ?></p>
-            <a href="dashboard.php" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Go to Dashboard</a>
+            <a href="dashboard" class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Go to Dashboard</a>
         </footer>
     </main>
 </body>

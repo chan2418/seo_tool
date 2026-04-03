@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../models/SubscriptionModel.php';
 require_once __DIR__ . '/../models/UserModel.php';
 require_once __DIR__ . '/../utils/Env.php';
+require_once __DIR__ . '/EmailNotificationService.php';
 require_once __DIR__ . '/SystemLogService.php';
 
 class BillingService
@@ -15,6 +16,7 @@ class BillingService
 
     private SubscriptionModel $subscriptionModel;
     private UserModel $userModel;
+    private EmailNotificationService $emailNotificationService;
     private SystemLogService $logService;
     private string $keyId;
     private string $keySecret;
@@ -24,12 +26,14 @@ class BillingService
     public function __construct(
         ?SubscriptionModel $subscriptionModel = null,
         ?UserModel $userModel = null,
+        ?EmailNotificationService $emailNotificationService = null,
         ?SystemLogService $logService = null
     ) {
         $this->envSourcePath = dirname(__DIR__) . '/.env';
         Env::load($this->envSourcePath);
         $this->subscriptionModel = $subscriptionModel ?? new SubscriptionModel();
         $this->userModel = $userModel ?? new UserModel();
+        $this->emailNotificationService = $emailNotificationService ?? new EmailNotificationService();
         $this->logService = $logService ?? new SystemLogService();
 
         $this->keyId = $this->readEnvFirstNonEmpty(['RAZORPAY_KEY_ID', 'RAZORPAY_API_KEY', 'RAZORPAY_KEY']);
@@ -133,6 +137,156 @@ class BillingService
                 'status' => (string) ($payload['status'] ?? 'created'),
             ],
             'billing_cycle' => $billingCycle,
+        ];
+    }
+
+    public function requestManualContactForPlan(int $userId, string $planType, string $billingCycle = 'monthly'): array
+    {
+        $planType = $this->normalizePlan($planType);
+        $billingCycle = $this->normalizeBillingCycle($billingCycle);
+        if (!in_array($planType, ['pro', 'agency'], true)) {
+            return $this->error('INVALID_PLAN', 'Only Pro and Agency plans can be requested.', 422);
+        }
+
+        $user = $this->userModel->getUserById($userId);
+        if (!$user) {
+            return $this->error('USER_NOT_FOUND', 'User not found.', 404);
+        }
+
+        $email = trim((string) ($user['email'] ?? ''));
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->error('INVALID_EMAIL', 'A valid account email is required to submit this plan request.', 422);
+        }
+
+        $userName = trim((string) ($user['name'] ?? ''));
+        if ($userName === '') {
+            $userName = 'there';
+        }
+
+        $planLabel = ucfirst($planType);
+        $cycleLabel = $billingCycle === 'annual' ? 'Annual' : 'Monthly';
+        $securityNote = 'For security purposes, online payment is not available for your account right now. Our security system will verify your account once, then we will proceed.';
+        $subject = 'We received your ' . $planLabel . ' plan request';
+        $bodyLines = [
+            'Hi ' . $userName . ',',
+            '',
+            'Thanks for choosing the ' . $planLabel . ' plan (' . $cycleLabel . ').',
+            $securityNote,
+            'Our team will contact you soon to complete your subscription process.',
+            '',
+            'If you did not request this, contact our support team from your dashboard.',
+            '',
+            'SEO Audit SaaS Team',
+        ];
+        $mailSent = $this->emailNotificationService->sendPlainEmail($email, $subject, implode("\n", $bodyLines));
+
+        $currentPlan = strtolower((string) ($user['plan_type'] ?? 'free'));
+        $planUpdated = $currentPlan === $planType ? true : $this->userModel->updatePlanType($userId, $planType);
+        if (!$planUpdated) {
+            $this->logService->error('billing', 'Manual contact request submitted, but failed to update user plan.', [
+                'user_id' => $userId,
+                'plan_type' => $planType,
+                'billing_cycle' => $billingCycle,
+                'email' => $email,
+            ], $userId);
+            return $this->error('PLAN_UPDATE_FAILED', 'Unable to update your plan right now. Please try again.', 500);
+        }
+
+        $periodEnd = $billingCycle === 'annual'
+            ? date('Y-m-d H:i:s', strtotime('+1 year'))
+            : date('Y-m-d H:i:s', strtotime('+1 month'));
+        $currentSubscription = $this->subscriptionModel->getCurrentByUser($userId);
+        $subscriptionResult = $this->subscriptionModel->upsertByGatewaySubscriptionId([
+            'user_id' => $userId,
+            'razorpay_customer_id' => isset($currentSubscription['razorpay_customer_id']) ? (string) $currentSubscription['razorpay_customer_id'] : null,
+            'razorpay_subscription_id' => isset($currentSubscription['razorpay_subscription_id']) ? (string) $currentSubscription['razorpay_subscription_id'] : null,
+            'plan_type' => $planType,
+            'status' => 'trialing',
+            'next_billing_date' => null,
+            'grace_ends_at' => null,
+            'current_period_start' => date('Y-m-d H:i:s'),
+            'current_period_end' => $periodEnd,
+            'cancel_at_period_end' => 0,
+        ]);
+        $subscriptionUpdated = !empty($subscriptionResult['success']);
+
+        $adminRecipients = $this->readEnvEmailList(['BILLING_CONTACT_ADMIN_EMAILS', 'BILLING_CONTACT_ADMIN_EMAIL']);
+        $adminSubjectPrefix = $this->readEnvFirstNonEmpty(['BILLING_CONTACT_ADMIN_SUBJECT_PREFIX']);
+        if ($adminSubjectPrefix === '') {
+            $adminSubjectPrefix = 'New plan contact request';
+        }
+        $adminSubject = $adminSubjectPrefix . ': ' . strtoupper($planType) . ' ' . strtoupper($cycleLabel) . ' - ' . $email;
+        $adminBodyLines = [
+            'A new manual subscription request was submitted.',
+            '',
+            'User ID: ' . $userId,
+            'User Name: ' . $userName,
+            'User Email: ' . $email,
+            'Requested Plan: ' . $planLabel,
+            'Billing Cycle: ' . $cycleLabel,
+            'Plan Updated In App: ' . ($planUpdated ? 'Yes' : 'No'),
+            'Subscription Snapshot Updated: ' . ($subscriptionUpdated ? 'Yes' : 'No'),
+            'User Confirmation Email Sent: ' . ($mailSent ? 'Yes' : 'No'),
+            'Requested At: ' . date('Y-m-d H:i:s'),
+            '',
+            'SEO Audit SaaS Billing',
+        ];
+        $adminSentCount = 0;
+        $adminFailedRecipients = [];
+        foreach ($adminRecipients as $adminEmail) {
+            $adminEmailSent = $this->emailNotificationService->sendPlainEmail($adminEmail, $adminSubject, implode("\n", $adminBodyLines));
+            if ($adminEmailSent) {
+                $adminSentCount++;
+            } else {
+                $adminFailedRecipients[] = $adminEmail;
+            }
+        }
+
+        $context = [
+            'plan_type' => $planType,
+            'billing_cycle' => $billingCycle,
+            'email' => $email,
+            'email_sent' => $mailSent ? 1 : 0,
+            'plan_updated' => $planUpdated ? 1 : 0,
+            'subscription_updated' => $subscriptionUpdated ? 1 : 0,
+            'admin_recipients' => count($adminRecipients),
+            'admin_sent' => $adminSentCount,
+        ];
+        if ($mailSent) {
+            $this->logService->info('billing', 'Manual subscription contact request submitted.', $context, $userId);
+        } else {
+            $this->logService->warning('billing', 'Manual subscription contact request submitted, but email sending failed.', $context, $userId);
+        }
+        if (!$subscriptionUpdated) {
+            $this->logService->warning('billing', 'Manual subscription request could not update subscription snapshot.', [
+                'user_id' => $userId,
+                'plan_type' => $planType,
+                'billing_cycle' => $billingCycle,
+            ], $userId);
+        }
+        if (!empty($adminRecipients) && !empty($adminFailedRecipients)) {
+            $this->logService->warning('billing', 'Admin notification email failed for some recipients.', [
+                'user_id' => $userId,
+                'failed_recipients' => $adminFailedRecipients,
+            ], $userId);
+        }
+        if (empty($adminRecipients)) {
+            $this->logService->warning('billing', 'No billing admin email recipients configured in env.', [
+                'user_id' => $userId,
+            ], $userId);
+        }
+
+        return [
+            'success' => true,
+            'plan_type' => $planType,
+            'billing_cycle' => $billingCycle,
+            'email_sent' => $mailSent,
+            'plan_updated' => $planUpdated,
+            'subscription_updated' => $subscriptionUpdated,
+            'admin_recipients' => count($adminRecipients),
+            'admin_sent' => $adminSentCount,
+            'effective_plan' => $planType,
+            'message' => $securityNote . ' Our team will contact you soon.',
         ];
     }
 
@@ -361,6 +515,28 @@ class BillingService
             }
         }
         return '';
+    }
+
+    private function readEnvEmailList(array $keys): array
+    {
+        $emails = [];
+        foreach ($keys as $key) {
+            $raw = trim((string) Env::get((string) $key, ''));
+            if ($raw === '') {
+                continue;
+            }
+            $parts = preg_split('/[,\s;]+/', $raw);
+            if (!is_array($parts)) {
+                continue;
+            }
+            foreach ($parts as $part) {
+                $email = strtolower(trim((string) $part));
+                if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $emails[$email] = true;
+                }
+            }
+        }
+        return array_keys($emails);
     }
 
     private function diagnosticsSuffix(): string

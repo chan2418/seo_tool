@@ -11,7 +11,36 @@
         Deny from all
     </FilesMatch>
 
-    # Route API requests (if we wanted pretty URLs, but we are using analyze.php directly)
-    # RewriteRule ^api/analyze$ analyze.php [L]
+    # OAuth callback hard routes (works even if extensionless rewrites are flaky on host config).
+    RewriteRule ^google-auth/?$ google-auth.php [L,QSA,NC]
+    RewriteRule ^google-auth-callback/?$ google-auth-callback.php [L,QSA,NC]
+    RewriteRule ^gsc-callback/?$ gsc-callback.php [L,QSA,NC]
+    RewriteRule ^(?:login|register)/google-auth/?$ google-auth.php [L,QSA,NC]
+    RewriteRule ^(?:login|register)/google-auth-callback/?$ google-auth-callback.php [L,QSA,NC]
+    RewriteRule ^public/google-auth/?$ google-auth.php [L,QSA,NC]
+    RewriteRule ^public/google-auth-callback/?$ google-auth-callback.php [L,QSA,NC]
+    RewriteRule ^public/gsc-callback/?$ gsc-callback.php [L,QSA,NC]
+    RewriteRule ^(?:login|register)/google-auth\.php$ google-auth.php [L,QSA,NC]
+    RewriteRule ^(?:login|register)/google-auth-callback\.php$ google-auth-callback.php [L,QSA,NC]
+    RewriteRule ^public/google-auth\.php$ google-auth.php [L,QSA,NC]
+    RewriteRule ^public/google-auth-callback\.php$ google-auth-callback.php [L,QSA,NC]
+    RewriteRule ^public/gsc-callback\.php$ gsc-callback.php [L,QSA,NC]
+
+    # Canonical: hide .php extension in browser URLs.
+    # Only redirect explicit .php requests for GET/HEAD so POST/API endpoints remain stable.
+    RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$ [NC]
+    RewriteCond %{THE_REQUEST} !\s/+public/ [NC]
+    RewriteCond %{THE_REQUEST} \s/+index\.php(?:[\s?]|$) [NC]
+    RewriteRule ^index\.php$ / [R=301,L]
+
+    RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$ [NC]
+    RewriteCond %{THE_REQUEST} !\s/+public/ [NC]
+    RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]|$) [NC]
+    RewriteRule ^(.+)\.php$ /$1 [R=301,L,NE]
+
+    # Serve extensionless routes from their .php files.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+?)/?$ $1.php [L]
 
 </IfModule>

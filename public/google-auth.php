@@ -36,7 +36,7 @@ if ($nextRedirect !== '') {
 }
 
 if (!empty($_SESSION['user_id'])) {
-    header('Location: ' . ($nextRedirect !== '' ? $nextRedirect : 'dashboard.php'));
+    header('Location: ' . ($nextRedirect !== '' ? $nextRedirect : 'dashboard'));
     exit;
 }
 
@@ -55,7 +55,7 @@ $service = new GoogleSignInService();
 $result = $service->buildAuthorizationUrl($mode);
 if (empty($result['success']) || empty($result['url'])) {
     $_SESSION['auth_flash_error'] = (string) ($result['error'] ?? 'Google Sign-In is not configured.');
-    header('Location: ' . ($mode === 'register' ? 'register.php' : 'login.php') . $nextQuery);
+    header('Location: ' . ($mode === 'register' ? 'register' : 'login') . $nextQuery);
     exit;
 }
 

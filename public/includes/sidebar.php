@@ -17,27 +17,28 @@ if (!empty($_SESSION['user_id'])) {
 $currentPage = basename((string) ($_SERVER['PHP_SELF'] ?? ''));
 $currentScriptPath = str_replace('\\', '/', (string) ($_SERVER['PHP_SELF'] ?? ''));
 $currentPlan = strtoupper((string) ($planType ?? ($_SESSION['plan_type'] ?? 'free')));
+$currentPlanNormalized = strtolower((string) ($planType ?? ($_SESSION['plan_type'] ?? 'free')));
 $currentRole = strtolower((string) ($_SESSION['role'] ?? 'user'));
 
 $menuItems = [
-    ['href' => 'dashboard.php', 'page' => 'dashboard.php', 'label' => 'Dashboard', 'tag' => 'Live'],
-    ['href' => 'alerts.php', 'page' => 'alerts.php', 'label' => 'Alerts', 'tag' => 'Bell'],
-    ['href' => 'performance.php', 'page' => 'performance.php', 'label' => 'Performance', 'tag' => 'GSC'],
-    ['href' => 'insights.php', 'page' => 'insights.php', 'label' => 'Insights', 'tag' => 'AI'],
-    ['href' => 'ai.php', 'page' => 'ai.php', 'label' => 'AI Assistant', 'tag' => 'Copilot'],
-    ['href' => 'history.php', 'page' => 'history.php', 'label' => 'Audit History', 'tag' => 'Graph'],
-    ['href' => 'keyword.php', 'page' => 'keyword.php', 'label' => 'Keyword Tool', 'tag' => 'Lab'],
-    ['href' => 'rank-tracker.php', 'page' => 'rank-tracker.php', 'label' => 'Rank Tracker', 'tag' => 'Daily'],
-    ['href' => 'competitor.php', 'page' => 'competitor.php', 'label' => 'Competitor', 'tag' => 'Intel'],
-    ['href' => 'backlinks.php', 'page' => 'backlinks.php', 'label' => 'Backlinks', 'tag' => 'Links'],
-    ['href' => 'crawl.php', 'page' => 'crawl.php', 'label' => 'Crawler', 'tag' => '10 URLs'],
-    ['href' => 'report.php', 'page' => 'report.php', 'label' => 'Reports', 'tag' => 'PDF'],
-    ['href' => 'subscription.php', 'page' => 'subscription.php', 'label' => 'Subscription', 'tag' => $currentPlan],
-    ['href' => 'settings.php', 'page' => 'settings.php', 'label' => 'Settings', 'tag' => 'Prefs'],
+    ['href' => 'dashboard', 'page' => 'dashboard.php', 'label' => 'Dashboard', 'tag' => 'Live'],
+    ['href' => 'alerts', 'page' => 'alerts.php', 'label' => 'Alerts', 'tag' => 'Bell'],
+    ['href' => 'performance', 'page' => 'performance.php', 'label' => 'Performance', 'tag' => 'GSC'],
+    ['href' => 'insights', 'page' => 'insights.php', 'label' => 'Insights', 'tag' => 'AI'],
+    ['href' => 'ai', 'page' => 'ai.php', 'label' => 'AI Assistant', 'tag' => $currentPlanNormalized === 'free' ? 'Examples' : 'Copilot'],
+    ['href' => 'history', 'page' => 'history.php', 'label' => 'Audit History', 'tag' => 'Graph'],
+    ['href' => 'keyword', 'page' => 'keyword.php', 'label' => 'Keyword Tool', 'tag' => 'Lab'],
+    ['href' => 'rank-tracker', 'page' => 'rank-tracker.php', 'label' => 'Rank Tracker', 'tag' => 'Daily'],
+    ['href' => 'competitor', 'page' => 'competitor.php', 'label' => 'Competitor', 'tag' => 'Intel'],
+    ['href' => 'backlinks', 'page' => 'backlinks.php', 'label' => 'Backlinks', 'tag' => 'Links'],
+    ['href' => 'crawl', 'page' => 'crawl.php', 'label' => 'Crawler', 'tag' => '10 URLs'],
+    ['href' => 'report', 'page' => 'report.php', 'label' => 'Reports', 'tag' => 'PDF'],
+    ['href' => 'subscription', 'page' => 'subscription.php', 'label' => 'Subscription', 'tag' => $currentPlan],
+    ['href' => 'settings', 'page' => 'settings.php', 'label' => 'Settings', 'tag' => 'Prefs'],
 ];
 
 if (in_array($currentRole, ['super_admin', 'admin', 'support_admin', 'billing_admin'], true)) {
-    $menuItems[] = ['href' => 'admin/dashboard.php', 'page' => 'admin/dashboard.php', 'label' => 'Admin Panel', 'tag' => 'Core'];
+    $menuItems[] = ['href' => 'admin/dashboard', 'page' => 'admin/dashboard.php', 'label' => 'Admin Panel', 'tag' => 'Core'];
 }
 ?>
 <style>
@@ -83,13 +84,15 @@ if (in_array($currentRole, ['super_admin', 'admin', 'support_admin', 'billing_ad
 </style>
 
 <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-40 flex h-full w-72 flex-col -translate-x-full border-r border-white/60 bg-white/85 p-6 shadow-soft backdrop-blur-xl transition-transform duration-300 dark:border-slate-700/80 dark:bg-slate-900/85 lg:translate-x-0">
-    <div class="mb-8 flex items-center gap-3">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-400 text-lg font-bold text-white shadow-soft">S</div>
+    <a href="/" class="mb-8 flex items-center gap-3 rounded-xl transition hover:opacity-90" aria-label="Go to home page">
+        <div class="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft dark:border-slate-700 dark:bg-slate-900">
+            <img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1.5">
+        </div>
         <div>
             <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">SEO Suite</p>
-            <p class="text-lg font-bold text-slate-900 dark:text-slate-100">Phase 5</p>
+            <p class="text-lg font-bold text-slate-900 dark:text-slate-100">Serponiq</p>
         </div>
-    </div>
+    </a>
 
     <div class="flex min-h-0 flex-1 flex-col">
         <nav class="sidebar-scroll min-h-0 flex-1 space-y-2 overflow-y-auto pr-1 text-sm font-semibold">
@@ -111,7 +114,7 @@ if (in_array($currentRole, ['super_admin', 'admin', 'support_admin', 'billing_ad
             <?php endforeach; ?>
         </nav>
 
-        <a href="logout.php" class="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20">
+        <a href="logout" class="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20">
             Logout
         </a>
     </div>

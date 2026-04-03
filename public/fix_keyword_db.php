@@ -95,7 +95,7 @@ try {
     echo '<p style="color:green">Ensured table exists: keyword_search_logs</p>';
 
     echo '<p><strong>Keyword DB upgrade complete.</strong></p>';
-    echo '<p><a href="keyword.php">Go to Keyword Tool</a></p>';
+    echo '<p><a href="keyword">Go to Keyword Tool</a></p>';
 } catch (Throwable $error) {
     echo '<p style="color:red">Error: ' . htmlspecialchars($error->getMessage()) . '</p>';
 }

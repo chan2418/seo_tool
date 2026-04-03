@@ -18,6 +18,8 @@ $planLabel = ucfirst($planType);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Alerts - SEO Audit SaaS</title>
     <script>
         (function () {
@@ -114,9 +116,7 @@ $planLabel = ucfirst($planType);
                         <?php echo htmlspecialchars($planLabel); ?> Plan
                     </span>
                     <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 text-sm font-bold text-white">
-                            <?php echo htmlspecialchars(strtoupper(substr($userName, 0, 1))); ?>
-                        </div>
+                        <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"><img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1"></div>
                         <p class="hidden text-sm font-semibold sm:block"><?php echo htmlspecialchars($userName); ?></p>
                     </div>
                 </div>
@@ -356,18 +356,18 @@ $planLabel = ucfirst($planType);
 
             function detailLink(alertType, projectId) {
                 if (!projectId) {
-                    return 'dashboard.php';
+                    return 'dashboard';
                 }
                 if ((alertType || '').indexOf('rank_') === 0) {
-                    return 'rank-tracker.php?project=' + encodeURIComponent(projectId);
+                    return 'rank-tracker?project=' + encodeURIComponent(projectId);
                 }
                 if ((alertType || '').indexOf('backlink_') === 0 || alertType === 'ref_domains_drop') {
-                    return 'backlinks.php';
+                    return 'backlinks';
                 }
                 if ((alertType || '').indexOf('crawl_') === 0) {
-                    return 'crawl.php';
+                    return 'crawl';
                 }
-                return 'history.php';
+                return 'history';
             }
 
             function renderProjects(projects) {

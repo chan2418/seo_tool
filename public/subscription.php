@@ -20,10 +20,14 @@ $billingFlashError = (string) ($_SESSION['billing_flash_error'] ?? '');
 if ($billingFlashError !== '') {
     unset($_SESSION['billing_flash_error']);
 }
-$billingStartProMonthlyHref = 'billing/start.php?plan=pro&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_monthly'));
-$billingStartProAnnualHref = 'billing/start.php?plan=pro&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_annual'));
-$billingStartAgencyMonthlyHref = 'billing/start.php?plan=agency&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_monthly'));
-$billingStartAgencyAnnualHref = 'billing/start.php?plan=agency&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_annual'));
+$billingFlashSuccess = (string) ($_SESSION['billing_flash_success'] ?? '');
+if ($billingFlashSuccess !== '') {
+    unset($_SESSION['billing_flash_success']);
+}
+$billingStartProMonthlyHref = 'billing/start?plan=pro&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_monthly'));
+$billingStartProAnnualHref = 'billing/start?plan=pro&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_annual'));
+$billingStartAgencyMonthlyHref = 'billing/start?plan=agency&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_monthly'));
+$billingStartAgencyAnnualHref = 'billing/start?plan=agency&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_annual'));
 $proMonthlyActionLabel = $isAgency ? 'Switch to Pro Monthly' : 'Upgrade Pro Monthly';
 $proAnnualActionLabel = $isAgency ? 'Switch to Pro Annual' : 'Upgrade Pro Annual';
 $agencyMonthlyActionLabel = 'Upgrade Agency Monthly';
@@ -34,6 +38,8 @@ $agencyAnnualActionLabel = 'Upgrade Agency Annual';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Subscription - SEO Audit SaaS</title>
     <script>
         (function () {
@@ -159,9 +165,7 @@ $agencyAnnualActionLabel = 'Upgrade Agency Annual';
                     </span>
 
                     <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 text-sm font-bold text-white">
-                            <?php echo htmlspecialchars(strtoupper(substr($userName, 0, 1))); ?>
-                        </div>
+                        <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"><img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1"></div>
                         <div class="hidden sm:block">
                             <p class="text-xs text-slate-500 dark:text-slate-400">Account</p>
                             <p class="text-sm font-semibold text-slate-900 dark:text-slate-100"><?php echo htmlspecialchars($userName); ?></p>
@@ -172,6 +176,11 @@ $agencyAnnualActionLabel = 'Upgrade Agency Annual';
         </header>
 
         <main class="space-y-6 px-4 pb-10 pt-6 sm:px-6 lg:px-10">
+            <?php if ($billingFlashSuccess !== ''): ?>
+                <section class="rounded-2xl border border-emerald-300/45 bg-emerald-500/10 px-5 py-4 text-sm text-emerald-700 dark:text-emerald-200">
+                    <?php echo htmlspecialchars($billingFlashSuccess); ?>
+                </section>
+            <?php endif; ?>
             <?php if ($billingFlashError !== ''): ?>
                 <section class="rounded-2xl border border-red-300/35 bg-red-500/10 px-5 py-4 text-sm text-red-200">
                     <?php echo htmlspecialchars($billingFlashError); ?>
@@ -200,7 +209,7 @@ $agencyAnnualActionLabel = 'Upgrade Agency Annual';
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Billing Cycle</p>
-                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Switch monthly or annual checkout without leaving this page.</p>
+                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Switch monthly or annual plan request without leaving this page.</p>
                     </div>
                     <div id="subscription-cycle-toggle" class="inline-flex items-center gap-1 rounded-2xl border border-slate-200 bg-slate-100/80 p-1 dark:border-slate-700 dark:bg-slate-900/70">
                         <button type="button" class="billing-cycle-btn is-active" data-cycle="monthly">Monthly</button>
@@ -278,9 +287,9 @@ $agencyAnnualActionLabel = 'Upgrade Agency Annual';
             </section>
 
             <section class="surface-card p-6 shadow-soft sm:p-8">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Secure Billing</h3>
-                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Plan changes are now handled through the billing API and verified webhooks. Manual simulation is disabled in production.</p>
-                <p class="mt-3 text-xs text-slate-500 dark:text-slate-400">Admin users can still run controlled local testing in development mode only.</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Plan Activation</h3>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">For security purposes, online payment is not available for your account right now. Our security system will verify your account once, then we will proceed and contact you to activate the paid plan.</p>
+                <p class="mt-3 text-xs text-slate-500 dark:text-slate-400">Use your registered account email to receive confirmation quickly.</p>
             </section>
         </main>
     </div>

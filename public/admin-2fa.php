@@ -5,7 +5,7 @@ require_once __DIR__ . '/../services/AdminTwoFactorService.php';
 require_once __DIR__ . '/../models/UserModel.php';
 
 if (empty($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -21,14 +21,14 @@ if (!$required) {
     $_SESSION['admin_2fa_verified'] = true;
     $next = (string) ($_SESSION['post_auth_next'] ?? '');
     unset($_SESSION['post_auth_next']);
-    header('Location: ' . ($next !== '' ? $next : 'dashboard.php'));
+    header('Location: ' . ($next !== '' ? $next : 'dashboard'));
     exit;
 }
 
 if (!empty($_SESSION['admin_2fa_verified']) && empty($_SESSION['admin_2fa_pending'])) {
     $next = (string) ($_SESSION['post_auth_next'] ?? '');
     unset($_SESSION['post_auth_next']);
-    header('Location: ' . ($next !== '' ? $next : 'admin/dashboard.php'));
+    header('Location: ' . ($next !== '' ? $next : 'admin/dashboard'));
     exit;
 }
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['admin_2fa_verified_at'] = time();
         $next = (string) ($_SESSION['post_auth_next'] ?? '');
         unset($_SESSION['post_auth_next']);
-        header('Location: ' . ($next !== '' ? $next : 'admin/dashboard.php'));
+        header('Location: ' . ($next !== '' ? $next : 'admin/dashboard'));
         exit;
     }
     $error = 'Invalid verification code.';
@@ -52,6 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Admin 2FA Verification</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -80,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white hover:bg-indigo-500">Verify</button>
         </form>
 
-        <a href="logout.php" class="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800">Logout</a>
+        <a href="logout" class="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800">Logout</a>
     </div>
 </body>
 </html>

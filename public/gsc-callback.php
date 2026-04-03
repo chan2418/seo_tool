@@ -27,7 +27,7 @@ $redirectToSettings = static function (string $type, string $message): void {
         'type' => $type,
         'message' => $message,
     ];
-    header('Location: settings.php');
+    header('Location: settings');
     exit;
 };
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && strtolower((string) ($_POST['action
             'type' => 'success',
             'message' => 'Google Search Console connected successfully.',
         ];
-        header('Location: performance.php?project_id=' . $projectId);
+        header('Location: performance?project_id=' . $projectId);
         exit;
     }
 } elseif (isset($_GET['error'])) {
@@ -124,6 +124,8 @@ $projectId = (int) (($pending['project_id'] ?? 0));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Link Search Console Property</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -181,7 +183,7 @@ $projectId = (int) (($pending['project_id'] ?? 0));
                     <button type="submit" class="rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-5 py-2 text-sm font-semibold text-white">
                         Save Property
                     </button>
-                    <a href="settings.php" class="rounded-xl border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700">Cancel</a>
+                    <a href="settings" class="rounded-xl border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700">Cancel</a>
                 </div>
             </form>
         </section>

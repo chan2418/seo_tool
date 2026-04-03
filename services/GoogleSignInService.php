@@ -315,8 +315,9 @@ class GoogleSignInService
             return $redirectUri;
         }
 
-        $path = strtolower((string) ($parts['path'] ?? ''));
-        if ($path === '' || !str_ends_with($path, '/gsc-callback.php')) {
+        $rawPath = (string) ($parts['path'] ?? '');
+        $path = strtolower($rawPath);
+        if ($path === '') {
             return $redirectUri;
         }
 
@@ -327,13 +328,38 @@ class GoogleSignInService
         }
 
         $port = isset($parts['port']) ? ':' . (int) $parts['port'] : '';
-        $newPath = preg_replace('~/gsc-callback\.php$~i', '/google-auth-callback.php', (string) ($parts['path'] ?? ''));
-        if (!is_string($newPath) || $newPath === '') {
-            return $redirectUri;
+
+        if (str_ends_with($path, '/gsc-callback.php')) {
+            $newPath = preg_replace('~/gsc-callback\.php$~i', '/google-auth-callback.php', $rawPath);
+            if (!is_string($newPath) || $newPath === '') {
+                return $redirectUri;
+            }
+
+            error_log('GoogleSignInService: GOOGLE_AUTH_REDIRECT_URI pointed to gsc-callback.php and was auto-corrected.');
+            return $scheme . '://' . $host . $port . $newPath;
         }
 
-        error_log('GoogleSignInService: GOOGLE_AUTH_REDIRECT_URI pointed to gsc-callback.php and was auto-corrected.');
-        return $scheme . '://' . $host . $port . $newPath;
+        if (str_ends_with($path, '/public/google-auth-callback.php')) {
+            $newPath = preg_replace('~/public/google-auth-callback\.php$~i', '/google-auth-callback.php', $rawPath);
+            if (!is_string($newPath) || $newPath === '') {
+                return $redirectUri;
+            }
+
+            error_log('GoogleSignInService: GOOGLE_AUTH_REDIRECT_URI pointed to /public/google-auth-callback.php and was auto-corrected.');
+            return $scheme . '://' . $host . $port . $newPath;
+        }
+
+        if (str_ends_with($path, '/public/google-auth-callback')) {
+            $newPath = preg_replace('~/public/google-auth-callback$~i', '/google-auth-callback', $rawPath);
+            if (!is_string($newPath) || $newPath === '') {
+                return $redirectUri;
+            }
+
+            error_log('GoogleSignInService: GOOGLE_AUTH_REDIRECT_URI pointed to /public/google-auth-callback and was auto-corrected.');
+            return $scheme . '://' . $host . $port . $newPath;
+        }
+
+        return $redirectUri;
     }
 
     private function decodeStatePayload(string $state): ?array

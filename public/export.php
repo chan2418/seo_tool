@@ -34,6 +34,8 @@ if ((int) ($report['user_id'] ?? 0) !== $userId) die("Access Denied");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>SEO Report - <?php echo htmlspecialchars($report['url']); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>

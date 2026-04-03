@@ -2,12 +2,137 @@
 session_start();
 
 require_once __DIR__ . '/../utils/CurrencyFormatter.php';
+require_once __DIR__ . '/../utils/Env.php';
 require_once __DIR__ . '/../middleware/CsrfMiddleware.php';
+require_once __DIR__ . '/../services/EmailNotificationService.php';
+
+Env::load(__DIR__ . '/../.env');
+
+if (!function_exists('landing_read_env_first_non_empty')) {
+    function landing_read_env_first_non_empty(array $keys): string
+    {
+        foreach ($keys as $key) {
+            $value = trim((string) Env::get((string) $key, ''));
+            if ($value !== '') {
+                return $value;
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists('landing_read_env_email_list')) {
+    function landing_read_env_email_list(array $keys): array
+    {
+        $emails = [];
+        foreach ($keys as $key) {
+            $value = trim((string) Env::get((string) $key, ''));
+            if ($value === '') {
+                continue;
+            }
+            foreach (explode(',', $value) as $raw) {
+                $email = strtolower(trim($raw));
+                if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $emails[$email] = true;
+                }
+            }
+        }
+        return array_keys($emails);
+    }
+}
+
+$siteName = 'Serponiq';
+$seoTitle = 'Serponiq: AI SEO Audit, Keyword Rank Tracker & Technical SEO Platform';
+$seoDescription = 'Serponiq helps agencies and businesses run AI SEO audits, track keyword rankings, monitor backlinks, analyze competitors, and improve Google Search Console performance.';
+$seoKeywords = 'SEO audit tool, AI SEO, keyword rank tracker, competitor analysis, backlink analysis, technical SEO, Google Search Console insights';
+$seoScheme = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') ? 'https' : 'http';
+$seoHost = trim((string) ($_SERVER['HTTP_HOST'] ?? ''));
+$seoBaseUrl = trim((string) Env::get('APP_URL', ''));
+if ($seoBaseUrl === '' && $seoHost !== '') {
+    $seoBaseUrl = $seoScheme . '://' . $seoHost;
+}
+$seoBaseUrl = rtrim($seoBaseUrl, '/');
+$seoCanonical = $seoBaseUrl !== '' ? $seoBaseUrl . '/' : '/';
+$seoOgImage = $seoBaseUrl !== '' ? $seoBaseUrl . '/assets/images/logo-256.png' : 'assets/images/logo-256.png';
+
+$seoSchema = [
+    '@context' => 'https://schema.org',
+    '@graph' => [
+        [
+            '@type' => 'Organization',
+            '@id' => $seoCanonical . '#organization',
+            'name' => $siteName,
+            'url' => $seoCanonical,
+            'logo' => $seoOgImage,
+        ],
+        [
+            '@type' => 'WebSite',
+            '@id' => $seoCanonical . '#website',
+            'url' => $seoCanonical,
+            'name' => $siteName,
+            'description' => $seoDescription,
+            'publisher' => ['@id' => $seoCanonical . '#organization'],
+        ],
+        [
+            '@type' => 'SoftwareApplication',
+            '@id' => $seoCanonical . '#software',
+            'name' => $siteName,
+            'applicationCategory' => 'BusinessApplication',
+            'operatingSystem' => 'Web',
+            'description' => $seoDescription,
+            'url' => $seoCanonical,
+            'offers' => [
+                '@type' => 'Offer',
+                'priceCurrency' => 'INR',
+                'price' => '0',
+                'availability' => 'https://schema.org/InStock',
+            ],
+        ],
+        [
+            '@type' => 'FAQPage',
+            '@id' => $seoCanonical . '#faq',
+            'mainEntity' => [
+                [
+                    '@type' => 'Question',
+                    'name' => 'Is my data secure?',
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => 'Yes. We use secure OAuth flows, project-level isolation, and role-based controls across the platform.',
+                    ],
+                ],
+                [
+                    '@type' => 'Question',
+                    'name' => 'Can I cancel anytime?',
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => 'Yes. You can upgrade, downgrade, or cancel at any time from your account settings.',
+                    ],
+                ],
+                [
+                    '@type' => 'Question',
+                    'name' => 'Do I need Google Search Console?',
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => 'No. You can use core SEO modules without GSC, but connecting it unlocks richer insights and AI recommendations.',
+                    ],
+                ],
+                [
+                    '@type' => 'Question',
+                    'name' => 'Is there a free plan?',
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => 'Yes. The Free plan includes essential SEO features and limited AI usage so you can validate fit before upgrading.',
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
 
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName = (string) ($_SESSION['user_name'] ?? 'User');
-$primaryHref = $isLoggedIn ? 'dashboard.php' : 'register.php';
-$heroPrimaryHref = $isLoggedIn ? '#run-audit' : 'register.php';
+$primaryHref = $isLoggedIn ? 'dashboard' : 'register';
+$heroPrimaryHref = $isLoggedIn ? '#run-audit' : 'register';
 $heroPrimaryLabel = $isLoggedIn ? 'Run New Audit' : 'Start Free';
 $availableProjects = [];
 
@@ -121,8 +246,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string) ($_POST['form_action'] ?? 
             if (!is_string($line) || $line === '' || file_put_contents($storageDir . '/demo_requests.log', $line . PHP_EOL, FILE_APPEND | LOCK_EX) === false) {
                 $demoErrors[] = 'Unable to save your request. Please try again shortly.';
             } else {
-                $_SESSION[$demoFlashKey] = 'Thanks. Your demo request has been received. Our team will contact you shortly.';
-                header('Location: index.php#request-demo');
+                $emailService = new EmailNotificationService();
+
+                $userSubject = 'We received your demo request';
+                $userBodyLines = [
+                    'Hi ' . $demoForm['full_name'] . ',',
+                    '',
+                    'Thanks for requesting a Serponiq demo.',
+                    'Our team will contact you soon to schedule the walkthrough.',
+                    '',
+                    'Request details:',
+                    '- Company: ' . $demoForm['company_name'],
+                    '- Website: ' . $demoForm['website_url'],
+                    '- SEO Budget: ' . ($demoBudgetOptions[$demoForm['seo_budget']] ?? 'Not specified'),
+                    '',
+                    'If you did not submit this request, please ignore this email.',
+                    '',
+                    'Serponiq Team',
+                ];
+                $userMailSent = $emailService->sendPlainEmail($demoForm['email'], $userSubject, implode("\n", $userBodyLines));
+
+                $adminRecipients = landing_read_env_email_list([
+                    'DEMO_CONTACT_ADMIN_EMAILS',
+                    'DEMO_CONTACT_ADMIN_EMAIL',
+                    'BILLING_CONTACT_ADMIN_EMAILS',
+                    'BILLING_CONTACT_ADMIN_EMAIL',
+                    'MAIL_FROM_EMAIL',
+                ]);
+                $adminSubjectPrefix = landing_read_env_first_non_empty(['DEMO_CONTACT_ADMIN_SUBJECT_PREFIX']);
+                if ($adminSubjectPrefix === '') {
+                    $adminSubjectPrefix = 'New demo request';
+                }
+                $adminSubject = $adminSubjectPrefix . ': ' . $demoForm['company_name'] . ' - ' . $demoForm['email'];
+                $adminBodyLines = [
+                    'A new demo request was submitted from the landing page.',
+                    '',
+                    'Submitted At: ' . date('Y-m-d H:i:s'),
+                    'Name: ' . $demoForm['full_name'],
+                    'Email: ' . $demoForm['email'],
+                    'Company: ' . $demoForm['company_name'],
+                    'Website: ' . $demoForm['website_url'],
+                    'SEO Budget: ' . ($demoBudgetOptions[$demoForm['seo_budget']] ?? 'Not specified'),
+                    'Message: ' . $demoForm['message'],
+                    'IP: ' . (string) ($payload['ip_address'] ?? ''),
+                    'User Agent: ' . (string) ($payload['user_agent'] ?? ''),
+                    '',
+                    'User Confirmation Email Sent: ' . ($userMailSent ? 'Yes' : 'No'),
+                ];
+
+                $adminMailSentCount = 0;
+                foreach ($adminRecipients as $adminEmail) {
+                    if ($emailService->sendPlainEmail($adminEmail, $adminSubject, implode("\n", $adminBodyLines))) {
+                        $adminMailSentCount++;
+                    }
+                }
+
+                if ($userMailSent) {
+                    $_SESSION[$demoFlashKey] = 'Thanks. Your demo request has been received. A confirmation email has been sent and our team will contact you shortly.';
+                } else {
+                    $_SESSION[$demoFlashKey] = 'Thanks. Your demo request has been received. Our team will contact you shortly.';
+                }
+                if (!empty($payload['email']) && $adminMailSentCount === 0) {
+                    error_log('Demo request admin notification email could not be sent for: ' . $payload['email']);
+                }
+                header('Location: /#request-demo');
                 exit;
             }
         }
@@ -131,26 +318,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string) ($_POST['form_action'] ?? 
 
 $demoCsrfToken = CsrfMiddleware::generateToken('landing_demo_csrf');
 
-$pricingFreeHref = $isLoggedIn ? 'dashboard.php' : 'register.php';
+$pricingFreeHref = $isLoggedIn ? 'dashboard' : 'register';
 $pricingFreeLabel = $isLoggedIn ? 'Go to Dashboard' : 'Start Free';
 
-$pricingProMonthlyCheckoutPath = 'billing/start.php?plan=pro&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_monthly'));
-$pricingProAnnualCheckoutPath = 'billing/start.php?plan=pro&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_annual'));
-$pricingAgencyMonthlyCheckoutPath = 'billing/start.php?plan=agency&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_monthly'));
-$pricingAgencyAnnualCheckoutPath = 'billing/start.php?plan=agency&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_annual'));
+$pricingProMonthlyCheckoutPath = 'billing/start?plan=pro&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_monthly'));
+$pricingProAnnualCheckoutPath = 'billing/start?plan=pro&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_pro_annual'));
+$pricingAgencyMonthlyCheckoutPath = 'billing/start?plan=agency&cycle=monthly&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_monthly'));
+$pricingAgencyAnnualCheckoutPath = 'billing/start?plan=agency&cycle=annual&token=' . urlencode(CsrfMiddleware::generateToken('billing_start_agency_annual'));
 
-$pricingProMonthlyHref = $isLoggedIn ? $pricingProMonthlyCheckoutPath : 'register.php?next=' . urlencode($pricingProMonthlyCheckoutPath);
-$pricingProAnnualHref = $isLoggedIn ? $pricingProAnnualCheckoutPath : 'register.php?next=' . urlencode($pricingProAnnualCheckoutPath);
-$pricingAgencyMonthlyHref = $isLoggedIn ? $pricingAgencyMonthlyCheckoutPath : 'register.php?next=' . urlencode($pricingAgencyMonthlyCheckoutPath);
-$pricingAgencyAnnualHref = $isLoggedIn ? $pricingAgencyAnnualCheckoutPath : 'register.php?next=' . urlencode($pricingAgencyAnnualCheckoutPath);
+$pricingProMonthlyHref = $isLoggedIn ? $pricingProMonthlyCheckoutPath : 'register?next=' . urlencode($pricingProMonthlyCheckoutPath);
+$pricingProAnnualHref = $isLoggedIn ? $pricingProAnnualCheckoutPath : 'register?next=' . urlencode($pricingProAnnualCheckoutPath);
+$pricingAgencyMonthlyHref = $isLoggedIn ? $pricingAgencyMonthlyCheckoutPath : 'register?next=' . urlencode($pricingAgencyMonthlyCheckoutPath);
+$pricingAgencyAnnualHref = $isLoggedIn ? $pricingAgencyAnnualCheckoutPath : 'register?next=' . urlencode($pricingAgencyAnnualCheckoutPath);
 ?>
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO Suite - AI-Powered SEO Intelligence Platform</title>
-    <meta name="description" content="AI-powered SEO intelligence platform combining Google Search Console data, rank tracking, and actionable optimization insights.">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+    <title><?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="keywords" content="<?php echo htmlspecialchars($seoKeywords, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="author" content="Serponiq">
+    <meta name="theme-color" content="#0C1429">
+    <link rel="canonical" href="<?php echo htmlspecialchars($seoCanonical, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Serponiq">
+    <meta property="og:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:url" content="<?php echo htmlspecialchars($seoCanonical, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:image" content="<?php echo htmlspecialchars($seoOgImage, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta property="og:image:alt" content="Serponiq SEO platform logo">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+    <meta name="twitter:image" content="<?php echo htmlspecialchars($seoOgImage, ENT_QUOTES, 'UTF-8'); ?>">
+    <script type="application/ld+json"><?php echo json_encode($seoSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); ?></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -237,10 +444,12 @@ $pricingAgencyAnnualHref = $isLoggedIn ? $pricingAgencyAnnualCheckoutPath : 'reg
 
     <header class="sticky top-0 z-40 border-b border-white/10 bg-ink-950/80 backdrop-blur-xl">
         <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-            <a href="index.php" class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 font-heading text-lg font-bold text-white shadow-glow">S</div>
+            <a href="/" class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/15 bg-white/10 shadow-glow">
+                    <img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1">
+                </div>
                 <div>
-                    <p class="font-heading text-base font-semibold text-white">SEO Suite</p>
+                    <p class="font-heading text-base font-semibold text-white">Serponiq</p>
                     <p class="text-xs text-slate-400">AI SEO Intelligence Platform</p>
                 </div>
             </a>
@@ -259,10 +468,10 @@ $pricingAgencyAnnualHref = $isLoggedIn ? $pricingAgencyAnnualCheckoutPath : 'reg
                     <span class="hidden rounded-lg border border-white/15 px-3 py-2 text-xs font-semibold text-slate-300 sm:inline-flex">
                         <?php echo htmlspecialchars($userName, ENT_QUOTES, 'UTF-8'); ?>
                     </span>
-                    <a href="dashboard.php" class="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/35 hover:text-white">Dashboard</a>
+                    <a href="dashboard" class="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/35 hover:text-white">Dashboard</a>
                 <?php else: ?>
-                    <a href="login.php" class="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/35">Login</a>
-                    <a href="register.php" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-5 py-2 text-sm font-bold text-white shadow-glow transition hover:brightness-110">Start Free</a>
+                    <a href="login" class="rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/35">Login</a>
+                    <a href="register" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-5 py-2 text-sm font-bold text-white shadow-glow transition hover:brightness-110">Start Free</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -744,7 +953,7 @@ $pricingAgencyAnnualHref = $isLoggedIn ? $pricingAgencyAnnualCheckoutPath : 'reg
                 <a href="#features" class="transition hover:text-slate-200">Features</a>
                 <a href="#pricing" class="transition hover:text-slate-200">Pricing</a>
                 <a href="#request-demo" class="transition hover:text-slate-200">Request Demo</a>
-                <a href="login.php" class="transition hover:text-slate-200">Login</a>
+                <a href="login" class="transition hover:text-slate-200">Login</a>
             </div>
         </div>
     </footer>
@@ -949,7 +1158,7 @@ $pricingAgencyAnnualHref = $isLoggedIn ? $pricingAgencyAnnualCheckoutPath : 'reg
 
                     if (data.success && data.id) {
                         showMessage('success', 'Audit completed. Opening report...');
-                        window.location.href = 'results.php?id=' + encodeURIComponent(String(data.id));
+                        window.location.href = 'results?id=' + encodeURIComponent(String(data.id));
                         return;
                     }
 

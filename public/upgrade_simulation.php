@@ -22,7 +22,7 @@ if (!$isDevEnv || !in_array($role, ['super_admin', 'admin'], true)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['toggle_plan'])) {
-    header('Location: subscription.php');
+    header('Location: subscription');
     exit;
 }
 
@@ -40,6 +40,6 @@ $userModel = new UserModel();
 $userModel->updatePlanType($userId, $newPlan);
 $_SESSION['plan_type'] = $newPlan;
 
-$redirectTo = $_SERVER['HTTP_REFERER'] ?? 'subscription.php';
+$redirectTo = $_SERVER['HTTP_REFERER'] ?? 'subscription';
 header('Location: ' . $redirectTo);
 exit;

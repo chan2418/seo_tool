@@ -31,4 +31,4 @@ try {
     echo "<p style='color:red'>" . $e->getMessage() . "</p>";
 }
 
-echo "<p><a href='index.php'>Go Home</a></p>";
+echo "<p><a href='/'>Go Home</a></p>";

@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /billing/
+Disallow: /webhooks/
+Disallow: /setup_db
+Disallow: /fix_db
+Disallow: /fix_keyword_db
+Disallow: /fix_phase3_db
+Disallow: /fix_phase4_db
+Disallow: /fix_phase5_db
+Disallow: /upgrade_simulation
+
+Sitemap: https://serponiq.com/sitemap.xml

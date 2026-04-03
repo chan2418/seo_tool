@@ -20,7 +20,7 @@ include __DIR__ . '/includes/nav.php';
             <h2 class="text-lg font-bold text-white"><?php echo htmlspecialchars((string) ($user['name'] ?? 'Unknown User')); ?></h2>
             <p class="text-sm text-slate-400"><?php echo htmlspecialchars((string) ($user['email'] ?? '')); ?> | ID: <?php echo $userId; ?></p>
         </div>
-        <a href="users.php" class="rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">Back to Users</a>
+        <a href="users" class="rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-800">Back to Users</a>
     </div>
 </section>
 

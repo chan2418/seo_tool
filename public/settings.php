@@ -31,6 +31,8 @@ unset($_SESSION['gsc_flash']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Settings - SEO Audit SaaS</title>
     <script>
         (function () {
@@ -129,9 +131,7 @@ unset($_SESSION['gsc_flash']);
                     </span>
 
                     <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 text-sm font-bold text-white">
-                            <?php echo htmlspecialchars(strtoupper(substr($userName, 0, 1))); ?>
-                        </div>
+                        <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"><img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1"></div>
                         <div class="hidden sm:block">
                             <p class="text-xs text-slate-500 dark:text-slate-400">Account</p>
                             <p class="text-sm font-semibold text-slate-900 dark:text-slate-100"><?php echo htmlspecialchars($userName); ?></p>
@@ -170,7 +170,7 @@ unset($_SESSION['gsc_flash']);
                         <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Google Search Console - Project Settings</h3>
                         <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Connect each project with its own Search Console property for real performance data.</p>
                     </div>
-                    <a href="performance.php" class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                    <a href="performance" class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                         Open Performance ->
                     </a>
                 </div>
@@ -224,21 +224,21 @@ unset($_SESSION['gsc_flash']);
                                         <td class="py-3">
                                             <div class="flex flex-wrap items-center gap-2">
                                                 <?php if (!$connected): ?>
-                                                    <a href="connect-gsc.php?project_id=<?php echo $pid; ?>&return_to=<?php echo urlencode('settings.php'); ?>" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-3 py-2 text-xs font-semibold text-white shadow-soft">
+                                                    <a href="connect-gsc?project_id=<?php echo $pid; ?>&return_to=<?php echo urlencode('settings'); ?>" class="rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-3 py-2 text-xs font-semibold text-white shadow-soft">
                                                         Connect GSC
                                                     </a>
                                                 <?php else: ?>
-                                                    <form method="post" action="connect-gsc.php" onsubmit="return confirm('Disconnect Search Console from this project?');">
+                                                    <form method="post" action="connect-gsc" onsubmit="return confirm('Disconnect Search Console from this project?');">
                                                         <input type="hidden" name="action" value="disconnect">
                                                         <input type="hidden" name="project_id" value="<?php echo $pid; ?>">
-                                                        <input type="hidden" name="return_to" value="settings.php">
+                                                        <input type="hidden" name="return_to" value="settings">
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($disconnectCsrf); ?>">
                                                         <button type="submit" class="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
                                                             Disconnect
                                                         </button>
                                                     </form>
                                                 <?php endif; ?>
-                                                <a href="performance.php?project_id=<?php echo $pid; ?>" class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                                                <a href="performance?project_id=<?php echo $pid; ?>" class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                                                     View Data
                                                 </a>
                                             </div>
@@ -265,15 +265,15 @@ unset($_SESSION['gsc_flash']);
                     <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Workflow Shortcuts</h3>
                     <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Fast actions for your day-to-day SEO workflow.</p>
                     <div class="mt-5 grid gap-3">
-                        <a href="index.php#run-audit" class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                        <a href="/#run-audit" class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                             <span>Run New Audit</span>
                             <span>-></span>
                         </a>
-                        <a href="history.php" class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                        <a href="history" class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                             <span>Open Audit History</span>
                             <span>-></span>
                         </a>
-                        <a href="keyword.php" class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                        <a href="keyword" class="inline-flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
                             <span>Go to Keyword Lab</span>
                             <span>-></span>
                         </a>

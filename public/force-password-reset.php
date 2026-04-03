@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($updated) {
             $_SESSION['force_password_reset'] = false;
             $success = 'Password updated successfully. Redirecting...';
-            header('Refresh: 1; URL=dashboard.php');
+            header('Refresh: 1; URL=dashboard');
         } else {
             $error = 'Unable to update password. Try again.';
         }
@@ -42,6 +42,8 @@ $csrfToken = CsrfMiddleware::generateToken('force_password_reset_csrf');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Reset Password</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -69,7 +71,7 @@ $csrfToken = CsrfMiddleware::generateToken('force_password_reset_csrf');
             <button type="submit" class="w-full rounded-xl bg-indigo-600 py-3 text-sm font-semibold text-white hover:bg-indigo-500">Update Password</button>
         </form>
 
-        <a href="logout.php" class="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800">Logout</a>
+        <a href="logout" class="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800">Logout</a>
     </div>
 </body>
 </html>

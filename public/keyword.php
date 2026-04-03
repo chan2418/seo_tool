@@ -21,6 +21,8 @@ $defaultPerPage = $isPaidPlan ? 10 : 5;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>Keyword Tool - SEO Audit SaaS</title>
     <script>
         (function () {
@@ -136,9 +138,7 @@ $defaultPerPage = $isPaidPlan ? 10 : 5;
                     </span>
 
                     <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 text-sm font-bold text-white">
-                            <?php echo htmlspecialchars(strtoupper(substr($userName, 0, 1))); ?>
-                        </div>
+                        <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"><img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1"></div>
                         <div class="hidden sm:block">
                             <p class="text-xs text-slate-500 dark:text-slate-400">Analyst</p>
                             <p class="text-sm font-semibold text-slate-900 dark:text-slate-100"><?php echo htmlspecialchars($userName); ?></p>
@@ -219,7 +219,7 @@ $defaultPerPage = $isPaidPlan ? 10 : 5;
                 <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Upgrade to unlock keyword intelligence</h3>
                 <p id="upgrade-text" class="mt-2 text-sm text-slate-600 dark:text-slate-300"><?php echo $hasKeywordAccess ? '' : 'Free plan includes keyword access with lower limits. Upgrade for higher limits and faster refresh.'; ?></p>
                 <div class="mt-4 flex flex-wrap gap-3">
-                    <a href="subscription.php" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">View Plans</a>
+                    <a href="subscription" class="inline-flex items-center rounded-xl bg-gradient-to-r from-brand-500 to-brand-400 px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:opacity-90">View Plans</a>
                 </div>
             </section>
 

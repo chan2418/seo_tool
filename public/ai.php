@@ -14,12 +14,15 @@ $userName = (string) ($auth['user_name'] ?? ($_SESSION['user_name'] ?? 'User'));
 $planService = new PlanEnforcementService();
 $planType = $planService->getEffectivePlan($userId, (string) ($_SESSION['plan_type'] ?? 'free'));
 $planLabel = ucfirst($planType);
+$isFreePlan = $planType === 'free';
 ?>
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
     <title>AI Intelligence - SEO Suite</title>
     <script>
         (function () {
@@ -194,9 +197,7 @@ $planLabel = ucfirst($planType);
                         <?php echo htmlspecialchars($planLabel); ?> Plan
                     </span>
                     <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-400 text-sm font-bold text-white">
-                            <?php echo htmlspecialchars(strtoupper(substr($userName, 0, 1))); ?>
-                        </div>
+                        <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"><img src="assets/images/logo-256.png" alt="Serponiq logo" class="h-full w-full object-contain p-1"></div>
                         <p class="hidden text-sm font-semibold sm:block"><?php echo htmlspecialchars($userName); ?></p>
                     </div>
                 </div>
@@ -221,6 +222,11 @@ $planLabel = ucfirst($planType);
                 </div>
 
                 <div id="message-box" class="mt-5 hidden rounded-2xl border p-4 text-sm font-medium"></div>
+                <?php if ($isFreePlan): ?>
+                    <div class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+                        Free plan can view AI examples only. Upgrade to Pro or Agency to submit live AI requests.
+                    </div>
+                <?php endif; ?>
 
                 <div class="mt-6 grid gap-3 md:grid-cols-4">
                     <div class="md:col-span-2">
@@ -368,7 +374,8 @@ $planLabel = ucfirst($planType);
                 projects: [],
                 activeRequestId: null,
                 pollTimer: null,
-                lastResult: null
+                lastResult: null,
+                isFreePlan: <?php echo $isFreePlan ? 'true' : 'false'; ?>
             };
 
             var elements = {
@@ -649,6 +656,112 @@ $planLabel = ucfirst($planType);
                     + '</article>';
             }
 
+            function renderFreeExampleForModule(module) {
+                var base = {
+                    generated_at: 'Example Preview',
+                    project: {
+                        name: 'Demo Project',
+                        domain: 'example.com'
+                    },
+                    meta: {
+                        model: 'example-preview',
+                        tokens_used: 0,
+                        cost_estimate_inr: 0
+                    }
+                };
+
+                if (module === 'meta') {
+                    renderResultPayload(Object.assign({}, base, {
+                        module: 'meta',
+                        answer: {
+                            optimized_title: 'Best SEO Audit Checklist for 2026',
+                            ctr_rewrite_title: 'SEO Audit Checklist: 15 Quick Fixes',
+                            optimized_meta_description: 'Use this SEO audit checklist to fix technical, content, and on-page gaps in one workflow.',
+                            ctr_rewrite_description: 'Find and fix SEO issues fast with a practical audit checklist for better rankings.',
+                            notes: [
+                                'Keep title length around 55-60 characters.',
+                                'Include the primary keyword near the start.',
+                                'Use benefit-driven wording for higher CTR.'
+                            ]
+                        }
+                    }));
+                    return;
+                }
+
+                if (module === 'optimizer') {
+                    renderResultPayload(Object.assign({}, base, {
+                        module: 'optimizer',
+                        answer: {
+                            missing_headings: [
+                                'H2: Technical SEO issues to check first',
+                                'H2: On-page SEO quick-win checklist'
+                            ],
+                            keyword_gaps: [
+                                'seo audit template',
+                                'website audit checklist'
+                            ],
+                            content_improvements: [
+                                {
+                                    item: 'Add internal links section',
+                                    why: 'Improves crawl depth and topical relevance.'
+                                },
+                                {
+                                    item: 'Expand FAQ block',
+                                    why: 'Captures long-tail queries and featured snippet opportunities.'
+                                }
+                            ],
+                            quick_wins: [
+                                'Add one actionable checklist near the top.',
+                                'Add schema markup examples.',
+                                'Link to one related guide page.'
+                            ]
+                        }
+                    }));
+                    return;
+                }
+
+                renderResultPayload(Object.assign({}, base, {
+                    module: 'advisor',
+                    answer: {
+                        answer_summary: 'Traffic dropped mainly due to weaker CTR on high-impression keywords and thin supporting content.',
+                        priority_actions: [
+                            {
+                                action: 'Rewrite title + meta on top landing pages',
+                                priority: 'High',
+                                reason: 'CTR loss is visible on high-impression pages.',
+                                evidence: 'Top keywords hold rank but clicks are lower.'
+                            },
+                            {
+                                action: 'Add FAQ and internal links',
+                                priority: 'Medium',
+                                reason: 'Pages need stronger topical depth and navigation flow.',
+                                evidence: 'Low engagement on deeper pages.'
+                            }
+                        ],
+                        watchouts: [
+                            'Avoid changing URL slug unless required.',
+                            'Do not over-optimize anchor text.'
+                        ],
+                        next_steps: [
+                            'Update meta tags on top 5 pages.',
+                            'Track CTR change for 14 days.',
+                            'Refresh supporting content sections.'
+                        ]
+                    }
+                }));
+            }
+
+            function applyFreePlanExampleMode() {
+                state.projectId = null;
+                elements.projectSelect.innerHTML = '<option value="">Example Mode</option>';
+                elements.projectSelect.disabled = true;
+                elements.submitButton.disabled = true;
+                elements.submitButton.classList.add('opacity-70', 'cursor-not-allowed');
+                elements.submitText.textContent = 'Example Mode (Free)';
+                showMessage('warning', 'Free plan can view AI examples only. Upgrade to Pro or Agency for live AI requests.');
+                renderFreeExampleForModule(state.module);
+            }
+
             function renderResultPayload(payload) {
                 if (!payload || typeof payload !== 'object') {
                     return;
@@ -758,6 +871,10 @@ $planLabel = ucfirst($planType);
                     var panelModule = panel.id.replace('module-', '');
                     panel.classList.toggle('hidden', panelModule !== nextModule);
                 });
+
+                if (state.isFreePlan) {
+                    renderFreeExampleForModule(nextModule);
+                }
             }
 
             function collectPayload() {
@@ -848,6 +965,11 @@ $planLabel = ucfirst($planType);
                     updateGlobal(response);
                     renderHistory(response.history || []);
 
+                    if (state.isFreePlan) {
+                        applyFreePlanExampleMode();
+                        return;
+                    }
+
                     var globalInfo = response.global || {};
                     if (!globalInfo.enabled) {
                         showMessage('warning', 'AI is currently disabled by administrator settings.');
@@ -866,11 +988,19 @@ $planLabel = ucfirst($planType);
             });
 
             elements.projectSelect.addEventListener('change', function () {
+                if (state.isFreePlan) {
+                    return;
+                }
                 state.projectId = Number(elements.projectSelect.value || 0) || null;
                 loadData(state.projectId);
             });
 
             elements.submitButton.addEventListener('click', function () {
+                if (state.isFreePlan) {
+                    showMessage('warning', 'Free plan is in example mode. Upgrade to Pro or Agency to send AI requests.');
+                    renderFreeExampleForModule(state.module);
+                    return;
+                }
                 if (!state.projectId) {
                     showMessage('error', 'Select a project first.');
                     return;

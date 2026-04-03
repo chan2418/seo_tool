@@ -28,7 +28,7 @@ class GoogleAuthService
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
             $redirect = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/gsc-callback.php';
         }
-        $this->redirectUri = $redirect;
+        $this->redirectUri = $this->normalizeGscRedirectUri($redirect);
 
         $keySource = trim((string) Env::get('GSC_TOKEN_ENCRYPTION_KEY', ''));
         if ($keySource === '') {
@@ -337,6 +337,67 @@ class GoogleAuthService
         return ['success' => true, 'payload' => $payload];
     }
 
+    private function normalizeGscRedirectUri(string $redirectUri): string
+    {
+        $redirectUri = trim($redirectUri);
+        if ($redirectUri === '') {
+            return '';
+        }
+
+        $parts = parse_url($redirectUri);
+        if (!is_array($parts)) {
+            return $redirectUri;
+        }
+
+        $rawPath = (string) ($parts['path'] ?? '');
+        $path = strtolower($rawPath);
+        if ($path === '') {
+            return $redirectUri;
+        }
+
+        $scheme = (string) ($parts['scheme'] ?? '');
+        $host = (string) ($parts['host'] ?? '');
+        if ($scheme === '' || $host === '') {
+            return $redirectUri;
+        }
+
+        $port = isset($parts['port']) ? ':' . (int) $parts['port'] : '';
+
+        if (str_ends_with($path, '/public/gsc-callback.php')) {
+            $newPath = preg_replace('~/public/gsc-callback\.php$~i', '/gsc-callback.php', $rawPath);
+            if (is_string($newPath) && $newPath !== '') {
+                error_log('GoogleAuthService: GSC_REDIRECT_URI pointed to /public/gsc-callback.php and was auto-corrected.');
+                return $scheme . '://' . $host . $port . $newPath;
+            }
+        }
+
+        if (str_ends_with($path, '/public/gsc-callback')) {
+            $newPath = preg_replace('~/public/gsc-callback$~i', '/gsc-callback', $rawPath);
+            if (is_string($newPath) && $newPath !== '') {
+                error_log('GoogleAuthService: GSC_REDIRECT_URI pointed to /public/gsc-callback and was auto-corrected.');
+                return $scheme . '://' . $host . $port . $newPath;
+            }
+        }
+
+        if (str_ends_with($path, '/google-auth-callback.php')) {
+            $newPath = preg_replace('~/google-auth-callback\.php$~i', '/gsc-callback.php', $rawPath);
+            if (is_string($newPath) && $newPath !== '') {
+                error_log('GoogleAuthService: GSC_REDIRECT_URI pointed to google-auth-callback.php and was auto-corrected.');
+                return $scheme . '://' . $host . $port . $newPath;
+            }
+        }
+
+        if (str_ends_with($path, '/google-auth-callback')) {
+            $newPath = preg_replace('~/google-auth-callback$~i', '/gsc-callback', $rawPath);
+            if (is_string($newPath) && $newPath !== '') {
+                error_log('GoogleAuthService: GSC_REDIRECT_URI pointed to google-auth-callback and was auto-corrected.');
+                return $scheme . '://' . $host . $port . $newPath;
+            }
+        }
+
+        return $redirectUri;
+    }
+
     private function resolvedEncryptionKey(): string
     {
         $key = trim($this->encryptionKey);
@@ -346,4 +407,3 @@ class GoogleAuthService
         return hash('sha256', $key, true);
     }
 }
-
