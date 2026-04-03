@@ -7,8 +7,8 @@ Env::load(dirname(__DIR__) . '/.env');
 return [
     'db_host' => Env::get('DB_HOST', 'localhost'),
     'db_port' => Env::get('DB_PORT', '3306'),
-    'db_name' => Env::get('DB_NAME', 'u477326958_seo_tool'),
-    'db_user' => Env::get('DB_USER', 'root'),
+    'db_name' => Env::get('DB_NAME', 'seo_tool'),
+    'db_user' => Env::get('DB_USER', 'your_database_user'),
     'db_pass' => Env::get('DB_PASS', ''),
 
     'pagespeed_api_key' => Env::get('PAGESPEED_API_KEY', ''),
